@@ -1,26 +1,120 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+:root{
+  --colorBtnPrimary:#111111;
+  --colorBtnPrimaryDim:#040404;
+  --colorBtnPrimaryText:#ffffff;
+  --colorCartDot:#ff4f33;
+
+  --colorLink:#1c1d1d;
+
+  --colorTextBody:#1c1d1d;
+  --colorSalePrice:#1c1d1d;
+  --colorSaleTag:#1c1d1d;
+  --colorSaleTagText:#ffffff;
+
+  --colorBody:#ffffff;
+  --colorBodyDim:#f2f2f2;
+  --colorInputBg:#ffffff;
+  --colorInputBgDim:#f2f2f2;
+  --colorInputBgDark:#e6e6e6;
+  --colorInputText:#1c1d1d;
+
+  --colorFooter:#111111;
+  --colorFooterText:#ffffff;
+
+  --colorBorder:#e8e8e1;
+
+  --colorNav:#ffffff;
+  --colorNavText:#1c1d1d;
+  --colorAnnouncement:#1c1d1d;
+  --colorAnnouncementText:#ffffff;
+
+  --colorHeroText:#ffffff;
+
+  --colorModalBg:#000000;
+
+  --colorSmallImageBg:#ffffff;
+  --colorLargeImageBg:#111111;
+
+  --colorDrawers:#ffffff;
+  --colorDrawersDim:#f2f2f2;
+  --colorDrawerBorder:#e8e8e1;
+  --colorDrawerText:#000000;
+  --colorDrawerTextDarken:#000000;
+  --colorDrawerButton:#111111;
+  --colorDrawerButtonText:#ffffff;
+
+  --sizeChartMargin:25px 0;
+  --sizeChartIconMargin:5px;
+
+  --newsletterReminderPadding:30px 35px;
+  --color-body-text:#1c1d1d;
+  --color-body:#ffffff;
+  --color-bg:#ffffff;
 }
+
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-colorBtnPrimary: var(--colorBtnPrimary);
+  --color-colorBtnPrimaryDim: var(--colorBtnPrimaryDim);
+  --color-colorBtnPrimaryText: var(--colorBtnPrimaryText);
+  --color-colorCartDot: var(--colorCartDot);
+
+  --color-colorLink: var(--colorLink);
+
+  --color-colorTextBody: var(--colorTextBody);
+  --color-colorSalePrice: var(--colorSalePrice);
+  --color-colorSaleTag: var(--colorSaleTag);
+  --color-colorSaleTagText: var(--colorSaleTagText);
+
+  --color-colorBody: var(--colorBody);
+  --color-colorBodyDim: var(--colorBodyDim);
+  --color-colorInputBg: var(--colorInputBg);
+  --color-colorInputBgDim: var(--colorInputBgDim);
+  --color-colorInputBgDark: var(--colorInputBgDark);
+  --color-colorInputText: var(--colorInputText);
+
+  --color-colorFooter: var(--colorFooter);
+  --color-colorFooterText: var(--colorFooterText);
+
+  --color-colorBorder: var(--colorBorder);
+
+  --color-colorNav: var(--colorNav);
+  --color-colorNavText: var(--colorNavText);
+  --color-colorAnnouncement: var(--colorAnnouncement);
+  --color-colorAnnouncementText: var(--colorAnnouncementText);
+
+  --color-colorHeroText: var(--colorHeroText);
+
+  --color-colorModalBg: var(--colorModalBg);
+
+  --color-colorSmallImageBg: var(--colorSmallImageBg);
+  --color-colorLargeImageBg: var(--colorLargeImageBg);
+
+  --color-colorDrawers: var(--colorDrawers);
+  --color-colorDrawersDim: var(--colorDrawersDim);
+  --color-colorDrawerBorder: var(--colorDrawerBorder);
+  --color-colorDrawerText: var(--colorDrawerText);
+  --color-colorDrawerTextDarken: var(--colorDrawerTextDarken);
+  --color-colorDrawerButton: var(--colorDrawerButton);
+  --color-colorDrawerButtonText: var(--colorDrawerButtonText);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+
+/* swipper pagination  */
+.swiper-pagination-bullet {
+  background-color: black !important;
+  opacity: 0.4;
 }
+
+.swiper-pagination-bullet-active {
+  background-color: black !important;
+  opacity: 1;
+}
+
