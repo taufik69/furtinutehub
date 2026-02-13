@@ -29,17 +29,17 @@ export default function Navbar() {
             {/* Desktop Navigation */}
             <div className="hidden md:flex items-center space-x-8">
               {[
+                { id: 2, name: "Home", href: "/" },
                 { id: 1, name: "All Collection", href: "/allcollection" },
-                { id: 3, name: "Grid Studio", href: "#" },
                 { id: 4, name: "Videos", href: "#" },
-                { id: 5, name: "Articles", href: "#" },
-                { id: 6, name: "About", href: "#" },
-                { id: 7, name: "Contact", href: "#" },
+                { id: 5, name: "Articles", href: "/articles" },
+                { id: 6, name: "About", href: "/studio" },
+                { id: 7, name: "Contact", href: "/contact" },
               ].map((item) => (
                 <Link
                   key={item.id}
                   href={item.href}
-                  className="text-colorNavText"
+                  className="text-colorNavText hover:text-colorBtnPrimary transition-colors"
                 >
                   {item.name}
                 </Link>
