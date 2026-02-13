@@ -5,8 +5,6 @@ import HeroContentClient from "./HeroContentClient";
 export default function HeroBanner() {
   return (
     <div className="relative w-full">
-      <Navbar />
-
       <div className="relative h-[75vh] w-full overflow-hidden">
         {/* Background Zoom (Client) */}
         <HeroBgClient />

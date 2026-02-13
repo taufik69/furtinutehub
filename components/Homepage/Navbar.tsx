@@ -17,8 +17,7 @@ export default function Navbar() {
           {/* Desktop Navigation Links */}
           <div className="hidden md:flex items-center space-x-8">
             {[
-              { id: 1, name: "All Collection", href: "#" },
-              { id: 2, name: "Elevating Desk Series", href: "#" },
+              { id: 1, name: "All Collection", href: "/allcollection" },
               { id: 3, name: "Grid Studio", href: "#" },
               { id: 4, name: "Videos", href: "#" },
               { id: 5, name: "Articles", href: "#" },
