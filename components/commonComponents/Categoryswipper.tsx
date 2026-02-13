@@ -19,7 +19,7 @@ export default function ShopByCategorySwipper({
   const nextRef = useRef<HTMLButtonElement>(null);
 
   return (
-    <section className="relative py-12 sm:py-16  bg-colorBody">
+    <section className="relative pt-12 sm:pt-16  bg-colorBody">
       {/* Custom Navigation Buttons */}
       <button
         ref={prevRef}

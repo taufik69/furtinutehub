@@ -42,7 +42,7 @@ const categories: CategoryCardProps[] = [
 
 export default function ShopByCategory() {
   return (
-    <section className="py-12 sm:py-16 lg:py-20 bg-colorBody">
+    <section className="bg-colorBody">
       <div className="container mx-auto px-4 sm:px-2 lg:px-0">
         {/* Section Header */}
         <div className="text-center mb-10 sm:mb-12 lg:mb-6">
