@@ -1,4 +1,6 @@
 import BestSelling from "@/components/Homepage/BestSelling";
+import ProductGridSection from "@/components/Homepage/CategoryProductTabs";
+import CustomerFeedback from "@/components/Homepage/CustomerFeedback";
 import HeroBanner from "@/components/Homepage/Herobanner";
 import NewArrival from "@/components/Homepage/NewArrival";
 import ShopByCategory from "@/components/Homepage/Shopbycategory";
@@ -17,6 +19,13 @@ export default function HomePage() {
       </section>
       <section className="py-4 sm:py-4 lg:py-25 ">
         <NewArrival />
+      </section>
+
+      <section>
+        <ProductGridSection />
+      </section>
+      <section>
+        <CustomerFeedback />
       </section>
     </main>
   );

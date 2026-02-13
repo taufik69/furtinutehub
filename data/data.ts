@@ -132,3 +132,40 @@ export const products = [
     slug: "velvet-accent-chair",
   },
 ];
+
+
+// data/testimonials.ts
+export const testimonials = [
+  {
+    id: 1,
+    rating: 5,
+    text: "They have a very well behaved and professional customer service.",
+    name: "Raisul Kabir",
+    title: "MD, Brainstation 23",
+    avatar: "/me.jpg",
+  },
+  {
+    id: 2,
+    rating: 5,
+    text: "Needed comfortable chairs for my office. Grid provided the best quality chairs on our budget.",
+    name: "Adnan Imtiaz Halim",
+    title: "CEO, Sheba.xyz",
+    avatar: "/me.jpg",
+  },
+  {
+    id: 3,
+    rating: 4,
+    text: "Really pleased with the after sale service. Got my product assembled in one day!",
+    name: "Jubayer Talukder",
+    title: "Youtube Content Creator",
+    avatar: "/me.jpg",
+  },
+  {
+    id: 4,
+    rating: 5,
+    text: "Amazing furniture quality and fast delivery. Highly recommend to everyone!",
+    name: "Sadia Rahman",
+    title: "Interior Designer",
+    avatar: "/me.jpg",
+  },
+];

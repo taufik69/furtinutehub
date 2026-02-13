@@ -36,7 +36,7 @@ export default function ProductCard({
   const getTagColor = (tag: string) => {
     switch (tag) {
       case "new":
-        return "bg-blue-600 text-white";
+        return "bg-green-600 text-white";
       case "sale":
         return "bg-colorSaleTag text-colorSaleTagText";
       case "hot":
@@ -91,7 +91,7 @@ export default function ProductCard({
           <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             {/* Wishlist Button */}
             <button
-              className="bg-white hover:bg-colorBtnPrimary text-colorTextBody hover:text-white p-2 rounded-full shadow-md transition-all duration-200"
+              className="bg-colorBtnPrimaryText hover:bg-colorBtnPrimary text-colorTextBody hover:text-colorBtnPrimaryText p-2 rounded-full shadow-md transition-all duration-200"
               aria-label="Add to wishlist"
             >
               <svg
@@ -111,7 +111,7 @@ export default function ProductCard({
 
             {/* Quick View Button */}
             <button
-              className="bg-white hover:bg-colorBtnPrimary text-colorTextBody hover:text-white p-2 rounded-full shadow-md transition-all duration-200"
+              className="bg-colorBtnPrimaryText hover:bg-colorBtnPrimary text-colorTextBody hover:text-colorBtnPrimaryText p-2 rounded-full shadow-md transition-all duration-200"
               aria-label="Quick view"
             >
               <svg
