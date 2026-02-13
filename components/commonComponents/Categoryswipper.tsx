@@ -23,14 +23,14 @@ export default function ShopByCategorySwipper({
       {/* Custom Navigation Buttons */}
       <button
         ref={prevRef}
-        className="absolute left-[-4%] top-1/2 -translate-y-1/2 z-10 bg-colorBtnPrimaryDim text-colorBtnPrimaryText w-10 h-10 flex items-center justify-center rounded-full hover:bg-colorBtnPrimaryDim/90 hover:scale-110 transition-all duration-300  cursor-pointer"
+        className="hidden md:blcok absolute left-[-4%] top-1/2 -translate-y-1/2 z-10 bg-colorBtnPrimaryDim text-colorBtnPrimaryText w-10 h-10 sm:flex items-center justify-center rounded-full hover:bg-colorBtnPrimaryDim/90 hover:scale-110 transition-all duration-300  cursor-pointer"
       >
         ←
       </button>
 
       <button
         ref={nextRef}
-        className="absolute right-[-5%] top-1/2 -translate-y-1/2 z-10 bg-colorBtnPrimaryDim text-colorBtnPrimaryText w-10 h-10 flex items-center justify-center rounded-full hover:bg-colorBtnPrimaryDim/90 hover:scale-110 transition-all duration-300  cursor-pointer"
+        className="hidden md:blcok absolute right-[-5%] top-1/2 -translate-y-1/2 z-10 bg-colorBtnPrimaryDim text-colorBtnPrimaryText w-10 h-10 sm:flex items-center justify-center rounded-full hover:bg-colorBtnPrimaryDim/90 hover:scale-110 transition-all duration-300  cursor-pointer"
       >
         →
       </button>

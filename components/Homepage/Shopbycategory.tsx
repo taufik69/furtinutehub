@@ -35,7 +35,7 @@ const categories: CategoryCardProps[] = [
   {
     id: 6,
     title: "Kitchen",
-    imageUrl: "/images/desk.webp",
+    imageUrl: "/images/sofa.webp",
     href: "/category/kitchen",
   },
 ];
