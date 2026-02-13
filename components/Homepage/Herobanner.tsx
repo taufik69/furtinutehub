@@ -2,7 +2,7 @@ import Navbar from "./Navbar";
 import HeroBgClient from "./HeroBgClient";
 import HeroContentClient from "./HeroContentClient";
 
-export default function HeroBanner() {
+export default function HeroBanner({ title }: { title: string }) {
   return (
     <div className="relative w-full">
       <div className="relative h-[75vh] w-full overflow-hidden">
@@ -13,7 +13,7 @@ export default function HeroBanner() {
         <div className="absolute inset-0 bg-black/45" />
 
         {/* Content animation (Client) */}
-        <HeroContentClient />
+        <HeroContentClient title={title} />
       </div>
     </div>
   );

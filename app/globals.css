@@ -120,4 +120,29 @@ html {
 
 
 
+@keyframes slide-down {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
 
+.animate-slide-down {
+  animation: slide-down 0.3s ease-out;
+}
+
+/* Safe area for devices with notches (iPhone X, etc.) */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Add bottom padding to body to account for fixed bottom nav on mobile */
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 4rem; /* 64px - height of bottom nav */
+  }
+}

@@ -194,7 +194,7 @@ export default function ShopPage() {
   return (
     <div className="min-h-screen bg-colorBody">
       {/* Top Search Section */}
-      <div className="bg-colorBodyDim/60 border-b border-colorBorder sticky top-0 z-40">
+      <div className="bg-colorBodyDim/60 border-b border-colorBorder ">
         <div className="container mx-auto px-4 py-4">
           {/* Search Bar */}
           <div className="relative">
@@ -205,7 +205,7 @@ export default function ShopPage() {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 onFocus={() => setShowHistory(true)}
-                className="w-full pl-12 pr-4 py-3 rounded-lg border border-colorBorder bg-colorInputBg text-colorInputText focus:outline-none focus:ring-2 focus:ring-colorBtnPrimary/20"
+                className="w-full pl-12 pr-4 py-3 rounded-lg border border-colorBorder bg-colorInputBg text-colorInputText focus:outline-none focus:ring-1 focus:ring-colorBtnPrimary/20"
               />
               <svg
                 className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-colorTextBody/40"
@@ -311,7 +311,7 @@ export default function ShopPage() {
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-4 py-2 rounded-lg border border-colorBorder bg-colorInputBg text-colorInputText focus:outline-none focus:ring-2 focus:ring-colorBtnPrimary/20"
+              className="px-4 py-2 rounded-lg  bg-colorInputBg text-colorInputText focus:outline-none "
             >
               <option value="featured">Featured</option>
               <option value="newest">Newest</option>
@@ -405,7 +405,7 @@ export default function ShopPage() {
                   <svg
                     className="w-5 h-5"
                     fill="none"
-                    stroke="currentColor"
+                    stroke="green"
                     viewBox="0 0 24 24"
                   >
                     <path
@@ -434,7 +434,7 @@ export default function ShopPage() {
                           min: Number(e.target.value),
                         }))
                       }
-                      className="w-full"
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-colorCartDot"
                     />
                   </div>
                   <div>
@@ -453,7 +453,7 @@ export default function ShopPage() {
                           max: Number(e.target.value),
                         }))
                       }
-                      className="w-full"
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-colorCartDot"
                     />
                   </div>
                 </div>

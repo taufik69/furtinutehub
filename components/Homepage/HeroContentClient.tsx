@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 
-export default function HeroContentClient() {
+export default function HeroContentClient({ title }: { title: string }) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
@@ -17,7 +17,7 @@ export default function HeroContentClient() {
             isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
         >
-          Modern Furniture
+          {title || "Modern Furniture"}
         </h1>
 
         <p

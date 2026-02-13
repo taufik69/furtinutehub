@@ -9,7 +9,7 @@ import ShopByCategory from "@/components/Homepage/Shopbycategory";
 export default function HomePage() {
   return (
     <main className="min-h-screen">
-      <HeroBanner />
+      <HeroBanner title="Modern Furniture" />
 
       {/* Rest of your page content */}
       <section className="py-12 sm:py-16 lg:py-20 ">
