@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
+import Footer from "@/components/commonComponents/Footer";
 
 const geistSans = Poppins({
   variable: "--font-poppins",
@@ -20,7 +21,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} `}>{children}</body>
+      <body className={`${geistSans.variable} `}>
+        {children}
+        <Footer />
+      </body>
     </html>
   );
 }

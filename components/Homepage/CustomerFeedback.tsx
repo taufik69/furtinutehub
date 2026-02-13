@@ -104,33 +104,29 @@ export default function CustomerFeedback() {
             pauseOnMouseEnter: true,
           }}
           loop={true}
-          centeredSlides={true}
-          spaceBetween={15}
-          slidesPerView={2.5}
+          spaceBetween={25}
+          slidesPerView={3}
           breakpoints={{
             640: {
-              slidesPerView: 1.5,
+              slidesPerView: 2,
               spaceBetween: 20,
             },
             768: {
-              slidesPerView: 2.2,
+              slidesPerView: 3,
               spaceBetween: 24,
             },
             1024: {
-              slidesPerView: 2.5,
+              slidesPerView: 3,
               spaceBetween: 30,
             },
           }}
-          slideToClickedSlide={true}
           className="pb-16 testimonial-swiper"
         >
           {testimonials.map((testimonial: Testimonial) => (
             <SwiperSlide key={testimonial.id}>
-              {({ isActive }) => (
+              {({ isActive }: { isActive: boolean }) => (
                 <div
-                  className={`bg-colorBodyDim/20 rounded-xl my-10 p-8 shadow h-full flex flex-col transition-all duration-500 ${
-                    isActive ? "scale-110 opacity-100" : "scale-90 opacity-70"
-                  }`}
+                  className={`bg-colorBodyDim/20 rounded-xl my-10 p-8 shadow h-full flex flex-col transition-all duration-500 `}
                 >
                   {/* Star Rating */}
                   <div className="flex gap-1 mb-4 justify-center">

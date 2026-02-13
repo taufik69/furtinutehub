@@ -3,6 +3,7 @@ import ProductGridSection from "@/components/Homepage/CategoryProductTabs";
 import CustomerFeedback from "@/components/Homepage/CustomerFeedback";
 import HeroBanner from "@/components/Homepage/Herobanner";
 import NewArrival from "@/components/Homepage/NewArrival";
+import ServicesSection from "@/components/Homepage/ServicesSection";
 import ShopByCategory from "@/components/Homepage/Shopbycategory";
 
 export default function HomePage() {
@@ -23,6 +24,10 @@ export default function HomePage() {
 
       <section>
         <ProductGridSection />
+      </section>
+
+      <section>
+        <ServicesSection />
       </section>
       <section>
         <CustomerFeedback />
