@@ -174,7 +174,7 @@ export default function ContactPage() {
   return (
     <div className="bg-colorBody min-h-screen">
       {/* Hero Section */}
-      <section className="pb-16 md:pb-16 md:pt-5 ">
+      <section className="pb-16 md:pb-16  ">
         <HeroBanner title="Contact Us" />
       </section>
 
