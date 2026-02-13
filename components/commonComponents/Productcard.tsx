@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useState } from "react";
 
 interface ProductCardProps {
-  key: number;
   id: string | number;
   name: string;
   description: string;
@@ -18,7 +17,6 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({
-  key,
   name,
   description,
   image,

@@ -1,5 +1,6 @@
 import BestSelling from "@/components/Homepage/BestSelling";
 import HeroBanner from "@/components/Homepage/Herobanner";
+import NewArrival from "@/components/Homepage/NewArrival";
 import ShopByCategory from "@/components/Homepage/Shopbycategory";
 
 export default function HomePage() {
@@ -13,6 +14,9 @@ export default function HomePage() {
       </section>
       <section className="py-4 sm:py-4 lg:py-1 ">
         <BestSelling />
+      </section>
+      <section className="py-4 sm:py-4 lg:py-25 ">
+        <NewArrival />
       </section>
     </main>
   );

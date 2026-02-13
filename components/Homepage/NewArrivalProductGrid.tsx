@@ -2,26 +2,31 @@
 
 import { useMemo, useState } from "react";
 import ProductCard from "../commonComponents/Productcard";
-import { products } from "@/data/data";
 
-export default function SellingProductGrid() {
+import { ProductCardProps } from "@/types/types";
+
+export default function NewArrivalProductGrid({
+  newArrivalData,
+}: {
+  newArrivalData: ProductCardProps[];
+}) {
   const STEP = 8;
   const [visibleCount, setVisibleCount] = useState(STEP);
 
   const visibleProducts = useMemo(
-    () => products.slice(0, visibleCount),
+    () => newArrivalData.slice(0, visibleCount),
     [visibleCount],
   );
 
-  const hasMore = visibleCount < products.length;
+  const hasMore = visibleCount < newArrivalData.length;
   const handleViewMore = () => {
-    setVisibleCount((prev) => Math.min(prev + STEP, products.length));
+    setVisibleCount((prev) => Math.min(prev + STEP, newArrivalData.length));
   };
 
   const handleViewLess = () => {
     setVisibleCount(STEP);
 
-    window.scrollTo({ top: 1400, behavior: "smooth" });
+    window.scrollTo({ top: 3000, behavior: "smooth" });
   };
   return (
     <div>
