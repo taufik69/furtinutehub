@@ -1,17 +1,21 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { collectionProducts, categories, colors } from "@/data/data";
+import { categories, colors } from "@/data/data";
 import CollectionProductCard from "@/components/commonComponents/Productcardupdated";
+
+const DEFAULT_MAX = 100000;
 
 export default function ShopPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [collectionProducts, setcollectionProducts] = useState([]);
+  //  API products
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  // State for filters
+  // State for filters (same UI behavior)
   const [searchQuery, setSearchQuery] = useState(
     searchParams.get("search") || "",
   );
@@ -23,7 +27,7 @@ export default function ShopPage() {
   );
   const [priceRange, setPriceRange] = useState({
     min: Number(searchParams.get("minPrice")) || 0,
-    max: Number(searchParams.get("maxPrice")) || 100000,
+    max: Number(searchParams.get("maxPrice")) || DEFAULT_MAX,
   });
   const [selectedAvailability, setSelectedAvailability] = useState<string[]>(
     searchParams.get("availability")?.split(",").filter(Boolean) || [],
@@ -43,29 +47,30 @@ export default function ShopPage() {
   // Load search history from localStorage
   useEffect(() => {
     const saved = localStorage.getItem("searchHistory");
-    if (saved) {
-      setSearchHistory(JSON.parse(saved));
-    }
+    if (saved) setSearchHistory(JSON.parse(saved));
   }, []);
 
-  // fetch product
-  const fetchProducts = async () => {
+  // ✅ Fetch products with query string
+  const fetchProducts = async (queryString: string) => {
+    setLoading(true);
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/product/get-products`,
-        {
-          cache: "no-store",
-        },
-      );
+      const url = `${process.env.NEXT_PUBLIC_API_URL}/product/get-products${
+        queryString ? `?${queryString}` : ""
+      }`;
+
+      const response = await fetch(url, { cache: "no-store" });
       const data = await response.json();
-      return data;
+
+      setProducts(data?.data || []);
     } catch (error) {
       console.error("Error fetching products:", error);
-      return [];
+      setProducts([]);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Update URL when filters change
+  // ✅ Update URL + fetch again when filters change
   useEffect(() => {
     const params = new URLSearchParams();
 
@@ -74,7 +79,7 @@ export default function ShopPage() {
       params.set("categories", selectedCategories.join(","));
     if (selectedColors.length) params.set("colors", selectedColors.join(","));
     if (priceRange.min > 0) params.set("minPrice", priceRange.min.toString());
-    if (priceRange.max < 100000)
+    if (priceRange.max < DEFAULT_MAX)
       params.set("maxPrice", priceRange.max.toString());
     if (selectedAvailability.length)
       params.set("availability", selectedAvailability.join(","));
@@ -82,27 +87,26 @@ export default function ShopPage() {
     if (sortBy !== "featured") params.set("sort", sortBy);
 
     const queryString = params.toString();
+
     router.replace(`/allcollection${queryString ? `?${queryString}` : ""}`, {
       scroll: false,
     });
-    // fetch product api call
-    const fn = async () => {
-      const data = await fetchProducts();
-      setcollectionProducts(data.data);
-    };
-    fn();
+
+    // ✅ fetch products using same query
+    fetchProducts(queryString);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     searchQuery,
     selectedCategories,
     selectedColors,
-    priceRange,
+    priceRange.min,
+    priceRange.max,
     selectedAvailability,
     minRating,
     sortBy,
-    router,
   ]);
 
-  // Handle search
+  // Handle search (same)
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     if (query && !searchHistory.includes(query)) {
@@ -113,70 +117,89 @@ export default function ShopPage() {
     setShowHistory(false);
   };
 
-  // Filter products
-  const filteredProducts = collectionProducts
-    .filter((product) => {
-      // Search query
-      if (
-        searchQuery &&
-        !product.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
-        !product.description.toLowerCase().includes(searchQuery.toLowerCase())
-      ) {
-        return false;
-      }
+  //  Filter products (from API data)
+  const filteredProducts = useMemo(() => {
+    return products
+      .filter((product: any) => {
+        // Search query
+        if (
+          searchQuery &&
+          !product?.name?.toLowerCase().includes(searchQuery.toLowerCase()) &&
+          !product?.description
+            ?.toLowerCase()
+            .includes(searchQuery.toLowerCase())
+        ) {
+          return false;
+        }
 
-      // Categories
-      if (
-        selectedCategories.length &&
-        !selectedCategories.includes(product.category)
-      ) {
-        return false;
-      }
+        // Categories (API has category object)
+        if (selectedCategories.length) {
+          const cat =
+            product?.category?.name ||
+            product?.category?.slug ||
+            product?.category;
+          if (!selectedCategories.includes(cat)) return false;
+        }
 
-      // Colors
-      if (
-        selectedColors.length &&
-        !product.colors.some((color) => selectedColors.includes(color))
-      ) {
-        return false;
-      }
+        // Colors (API field can be `color` or `colors`)
+        if (selectedColors.length) {
+          const pColors: string[] = product?.color || product?.colors || [];
+          if (!pColors.some((c) => selectedColors.includes(c))) return false;
+        }
 
-      // Price range
-      if (product.price < priceRange.min || product.price > priceRange.max) {
-        return false;
-      }
+        // Price range (use finalPrice if available)
+        const price = Number(product?.finalPrice ?? product?.price ?? 0);
+        if (price < priceRange.min || price > priceRange.max) return false;
 
-      // Availability
-      if (
-        selectedAvailability.length &&
-        !selectedAvailability.includes(product.availability)
-      ) {
-        return false;
-      }
+        // Availability mapping
+        if (selectedAvailability.length) {
+          const availability = product?.inStock
+            ? "in-stock"
+            : product?.isLimited
+              ? "limited"
+              : "out-of-stock";
 
-      // Rating
-      if (product.rating < minRating) {
-        return false;
-      }
+          if (!selectedAvailability.includes(availability)) return false;
+        }
 
-      return true;
-    })
-    .sort((a, b) => {
-      switch (sortBy) {
-        case "price-low":
-          return a.price - b.price;
-        case "price-high":
-          return b.price - a.price;
-        case "rating":
-          return b.rating - a.rating;
-        case "newest":
-          return b.id - a.id;
-        default:
-          return 0;
-      }
-    });
+        // Rating
+        if (Number(product?.rating ?? 0) < minRating) return false;
 
-  // Toggle functions
+        return true;
+      })
+      .sort((a: any, b: any) => {
+        const aPrice = Number(a?.finalPrice ?? a?.price ?? 0);
+        const bPrice = Number(b?.finalPrice ?? b?.price ?? 0);
+
+        switch (sortBy) {
+          case "price-low":
+            return aPrice - bPrice;
+          case "price-high":
+            return bPrice - aPrice;
+          case "rating":
+            return Number(b?.rating ?? 0) - Number(a?.rating ?? 0);
+          case "newest":
+            return (
+              new Date(b?.createdAt).getTime() -
+              new Date(a?.createdAt).getTime()
+            );
+          default:
+            return 0;
+        }
+      });
+  }, [
+    products,
+    searchQuery,
+    selectedCategories,
+    selectedColors,
+    priceRange.min,
+    priceRange.max,
+    selectedAvailability,
+    minRating,
+    sortBy,
+  ]);
+
+  // Toggle functions (same)
   const toggleCategory = (category: string) => {
     setSelectedCategories((prev) =>
       prev.includes(category)
@@ -203,7 +226,7 @@ export default function ShopPage() {
     setSearchQuery("");
     setSelectedCategories([]);
     setSelectedColors([]);
-    setPriceRange({ min: 0, max: 100000 });
+    setPriceRange({ min: 0, max: DEFAULT_MAX });
     setSelectedAvailability([]);
     setMinRating(0);
     setSortBy("featured");
@@ -213,7 +236,7 @@ export default function ShopPage() {
     selectedCategories.length +
     selectedColors.length +
     selectedAvailability.length +
-    (priceRange.min > 0 || priceRange.max < 100000 ? 1 : 0) +
+    (priceRange.min > 0 || priceRange.max < DEFAULT_MAX ? 1 : 0) +
     (minRating > 0 ? 1 : 0);
 
   return (
@@ -319,7 +342,9 @@ export default function ShopPage() {
               </button>
 
               <span className="text-sm text-colorTextBody/60">
-                {filteredProducts.length} Products Found
+                {loading
+                  ? "Loading..."
+                  : `${filteredProducts.length} Products Found`}
               </span>
 
               {activeFiltersCount > 0 && (
@@ -450,7 +475,7 @@ export default function ShopPage() {
                     <input
                       type="range"
                       min="0"
-                      max="100000"
+                      max={DEFAULT_MAX}
                       step="1000"
                       value={priceRange.min}
                       onChange={(e) =>
@@ -469,7 +494,7 @@ export default function ShopPage() {
                     <input
                       type="range"
                       min="0"
-                      max="100000"
+                      max={DEFAULT_MAX}
                       step="1000"
                       value={priceRange.max}
                       onChange={(e) =>
@@ -619,10 +644,22 @@ export default function ShopPage() {
 
           {/* Products Grid */}
           <main className="flex-1">
-            {filteredProducts.length > 0 ? (
+            {loading ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredProducts.map((product) => (
-                  <CollectionProductCard key={product.id} {...product} />
+                {Array.from({ length: 9 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="h-72 rounded bg-gray-200 animate-pulse"
+                  />
+                ))}
+              </div>
+            ) : filteredProducts.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredProducts.map((product: any) => (
+                  <CollectionProductCard
+                    key={product._id || product.slug}
+                    productData={product}
+                  />
                 ))}
               </div>
             ) : (
@@ -637,7 +674,7 @@ export default function ShopPage() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M12 12h.01M12 12h.01M12 12h.01M12 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M12 12h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
                 <h3 className="text-xl font-semibold text-colorTextBody mb-2">

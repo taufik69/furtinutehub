@@ -2,42 +2,49 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 
-interface ProductCardProps {
-  id: string | number;
-  name: string;
-  description: string;
-  image: string;
-  price: number;
-  originalPrice?: number;
-  discount?: number;
-  tags?: string[];
-  slug: string;
-  availability: "in-stock" | "out-of-stock" | "limited";
-  rating: number;
-  reviewCount: number;
-}
+export default function CollectionProductCard({ productData }: any) {
+  // --------- dynamic mapping from API product ----------
+  const name = productData?.name ?? "";
+  const slug = productData?.slug ?? "";
+  const description =
+    productData?.shortDescription ?? productData?.description ?? "";
 
-export default function CollectionProductCard({
-  name,
-  description,
-  image,
-  price,
-  originalPrice,
-  discount,
-  tags = [],
-  slug,
-  availability,
-  rating,
-  reviewCount,
-}: ProductCardProps) {
-  const [isWishlisted, setIsWishlisted] = useState(false);
-  const [isAddingToCart, setIsAddingToCart] = useState(false);
+  // image: prefer optimized_url then url
+  const image =
+    productData?.image?.[0]?.optimized_url ||
+    productData?.image?.[0]?.url ||
+    productData?.category?.image?.url ||
+    "/images/placeholder.png";
 
-  const hasDiscount = discount && discount > 0;
-  const formattedPrice = price.toLocaleString("en-BD");
-  const formattedOriginalPrice = originalPrice?.toLocaleString("en-BD");
+  const rating = Number(productData?.rating ?? 0);
+  const reviewCount = Number(productData?.totalReviews ?? 0);
+
+  // prices
+  const finalPrice = Number(productData?.finalPrice ?? 0);
+  const discountPrice = productData?.price;
+
+  // discount percent (if backend gives discountValue)
+  const discount =
+    productData?.discountType === "percentage"
+      ? `${productData?.discountValue}%`
+      : `${productData?.discountValue}৳`;
+
+  // tags from backend booleans
+  const tags = useMemo(() => {
+    const t: string[] = [];
+    if (productData?.isNew) t.push("new");
+    if (productData?.isSale) t.push("sale");
+    if (productData?.isHot) t.push("hot");
+    if (productData?.isLimited) t.push("limited");
+    return t;
+  }, [productData]);
+
+  //  --------- original UI logic (unchanged) ----------
+
+  const formattedPrice = discountPrice.toLocaleString("en-BD");
+  const formattedFinalPrice = finalPrice?.toLocaleString("en-BD");
 
   const getTagColor = (tag: string) => {
     switch (tag) {
@@ -58,29 +65,17 @@ export default function CollectionProductCard({
     return tag.toUpperCase();
   };
 
-  const getAvailabilityColor = () => {
-    switch (availability) {
-      case "in-stock":
-        return "text-green-600";
-      case "limited":
-        return "text-orange-500";
-      case "out-of-stock":
-        return "text-red-600";
-    }
+  const getAvailabilityColor = (stock: number) => {
+    if (stock === 0) return "text-red-600 ";
+    if (stock > 0) return "text-green-600 ";
+    if (stock < 5) return "text-yellow-600 ";
   };
 
-  const getAvailabilityText = () => {
-    switch (availability) {
-      case "in-stock":
-        return "In Stock";
-      case "limited":
-        return "Limited Stock";
-      case "out-of-stock":
-        return "Out of Stock";
-    }
+  const getAvailabilityText = (stock: number) => {
+    if (stock === 0) return "Out of Stock";
+    if (stock > 0) return "In Stock";
+    if (stock < 5) return "Low Stock";
   };
-
-  const isOutOfStock = availability === "out-of-stock";
 
   return (
     <div className="group relative bg-colorBody border border-colorBorder rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300">
@@ -93,13 +88,13 @@ export default function CollectionProductCard({
             width={400}
             height={400}
             className={`object-cover w-full h-full group-hover:scale-105 transition-transform duration-500 ${
-              isOutOfStock ? "opacity-50" : ""
+              productData.stock === 0 ? "opacity-50" : ""
             }`}
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
           />
 
           {/* Out of Stock Overlay */}
-          {isOutOfStock && (
+          {productData.stock === 0 && (
             <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
               <span className="bg-red-600 text-white px-4 py-2 rounded-lg font-semibold">
                 OUT OF STOCK
@@ -108,7 +103,7 @@ export default function CollectionProductCard({
           )}
 
           {/* Tags - Top Left */}
-          {(tags.length > 0 || hasDiscount) && (
+          {(tags.length > 0 || productData?.discountValue > 0) && (
             <div className="absolute top-3 left-3 flex flex-col gap-2">
               {tags.map((tag) => (
                 <span
@@ -120,9 +115,9 @@ export default function CollectionProductCard({
                   {getTagLabel(tag)}
                 </span>
               ))}
-              {hasDiscount && (
+              {productData?.discountValue > 0 && (
                 <span className="bg-colorSaleTag text-colorSaleTagText px-3 py-1 rounded text-xs font-semibold">
-                  -{discount}%
+                  {discount}
                 </span>
               )}
             </div>
@@ -132,13 +127,12 @@ export default function CollectionProductCard({
           <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             {/* Wishlist Button */}
             <button
-              onClick={() => setIsWishlisted(!isWishlisted)}
               className="bg-colorBtnPrimaryText hover:bg-colorBtnPrimary text-colorTextBody hover:text-colorBtnPrimaryText p-2 rounded-full shadow-md transition-all duration-200"
               aria-label="Add to wishlist"
             >
               <svg
                 className="w-5 h-5"
-                fill={isWishlisted ? "currentColor" : "none"}
+                fill={"currentColor"}
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
@@ -179,57 +173,25 @@ export default function CollectionProductCard({
           </div>
 
           {/* Add to Cart Button - Slides up on hover */}
-          {!isOutOfStock && (
+          {productData?.stock !== 0 && (
             <div className="absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-              <button
-                disabled={isAddingToCart}
-                onClick={() => {
-                  setIsAddingToCart(true);
-                  setTimeout(() => setIsAddingToCart(false), 1000);
-                }}
-                className="w-full bg-colorBtnPrimary hover:bg-colorBtnPrimaryDim text-colorBtnPrimaryText py-3 px-4 flex items-center justify-center gap-2 font-medium transition-colors duration-200 disabled:opacity-50"
-              >
-                {isAddingToCart ? (
-                  <>
-                    <svg
-                      className="animate-spin h-5 w-5"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                    >
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      />
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      />
-                    </svg>
-                    Adding...
-                  </>
-                ) : (
-                  <>
-                    <svg
-                      className="w-5 h-5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
-                      />
-                    </svg>
-                    Add to Cart
-                  </>
-                )}
+              <button className="w-full bg-colorBtnPrimary hover:bg-colorBtnPrimaryDim text-colorBtnPrimaryText py-3 px-4 flex items-center justify-center gap-2 font-medium transition-colors duration-200 disabled:opacity-50">
+                <>
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
+                    />
+                  </svg>
+                  Add to Cart
+                </>
               </button>
             </div>
           )}
@@ -277,16 +239,18 @@ export default function CollectionProductCard({
 
         {/* Availability */}
         <div className="mb-3">
-          <span className={`text-xs font-medium ${getAvailabilityColor()}`}>
-            {getAvailabilityText()}
+          <span
+            className={`text-xs font-medium ${getAvailabilityColor(productData?.stock)}`}
+          >
+            {getAvailabilityText(productData?.stock)}
           </span>
         </div>
 
         {/* Price */}
         <div className="flex items-center gap-2">
-          {originalPrice && (
+          {finalPrice && (
             <span className="text-colorTextBody/40 text-sm line-through">
-              ৳ {formattedOriginalPrice}
+              ৳ {formattedFinalPrice}
             </span>
           )}
           <span className="text-colorSalePrice font-bold text-lg">
