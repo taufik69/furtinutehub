@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { categories, colors } from "@/data/data";
+import { colors } from "@/data/data";
 import CollectionProductCard from "@/components/commonComponents/Productcardupdated";
 
 const DEFAULT_MAX = 100000;
@@ -11,26 +11,27 @@ export default function ShopPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  //  API products
+  // API data
   const [products, setProducts] = useState<any[]>([]);
+  const [categories, setCategories] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
-  // State for filters (same UI behavior)
+  // State for filters - synced with URL
   const [searchQuery, setSearchQuery] = useState(
-    searchParams.get("search") || "",
+    searchParams.get("name") || "",
   );
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(
-    searchParams.get("categories")?.split(",").filter(Boolean) || [],
+  const [selectedCategory, setSelectedCategory] = useState(
+    searchParams.get("category") || "",
   );
-  const [selectedColors, setSelectedColors] = useState<string[]>(
-    searchParams.get("colors")?.split(",").filter(Boolean) || [],
+  const [selectedColor, setSelectedColor] = useState(
+    searchParams.get("color") || "",
   );
   const [priceRange, setPriceRange] = useState({
     min: Number(searchParams.get("minPrice")) || 0,
     max: Number(searchParams.get("maxPrice")) || DEFAULT_MAX,
   });
-  const [selectedAvailability, setSelectedAvailability] = useState<string[]>(
-    searchParams.get("availability")?.split(",").filter(Boolean) || [],
+  const [selectedAvailability, setSelectedAvailability] = useState(
+    searchParams.get("availability") || "",
   );
   const [minRating, setMinRating] = useState(
     Number(searchParams.get("rating")) || 0,
@@ -50,12 +51,58 @@ export default function ShopPage() {
     if (saved) setSearchHistory(JSON.parse(saved));
   }, []);
 
-  // ✅ Fetch products with query string
-  const fetchProducts = async (queryString: string) => {
+  // Fetch categories on mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/categories/get-category`,
+          { cache: "no-store" },
+        );
+        const data = await response.json();
+        setCategories(data?.data || []);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+        setCategories([]);
+      }
+    };
+    fetchCategories();
+  }, []);
+
+  // Fetch products with query params
+  const fetchProducts = async () => {
     setLoading(true);
     try {
+      const params = new URLSearchParams();
+
+      // Add all query params
+      if (searchQuery) params.set("name", searchQuery);
+      if (selectedCategory) params.set("category", selectedCategory);
+      if (selectedColor) params.set("color", selectedColor);
+      if (priceRange.min > 0) params.set("minPrice", priceRange.min.toString());
+      if (priceRange.max < DEFAULT_MAX)
+        params.set("maxPrice", priceRange.max.toString());
+
+      // Availability - convert to boolean params
+      // Availability - only send the selected one as true
+      if (selectedAvailability === "in-stock") {
+        params.set("inStock", "true");
+      } else if (selectedAvailability === "limited") {
+        params.set("isLimited", "true");
+      } else if (selectedAvailability === "out-of-stock") {
+        params.set("outOfStock", "true");
+      }
+
+      if (minRating > 0) params.set("rating", minRating.toString());
+
+      // Sorting - convert to boolean params
+      if (sortBy === "price-low") params.set("lowToHigh", "true");
+      else if (sortBy === "price-high") params.set("highToLow", "true");
+      else if (sortBy === "newest") params.set("newest", "true");
+      else if (sortBy === "oldest") params.set("oldest", "true");
+
       const url = `${process.env.NEXT_PUBLIC_API_URL}/product/get-products${
-        queryString ? `?${queryString}` : ""
+        params.toString() ? `?${params.toString()}` : ""
       }`;
 
       const response = await fetch(url, { cache: "no-store" });
@@ -70,35 +117,23 @@ export default function ShopPage() {
     }
   };
 
-  // ✅ Update URL + fetch again when filters change
+  // Debounced search effect
   useEffect(() => {
-    const params = new URLSearchParams();
+    const timer = setTimeout(() => {
+      fetchProducts();
+    }, 300);
 
-    if (searchQuery) params.set("search", searchQuery);
-    if (selectedCategories.length)
-      params.set("categories", selectedCategories.join(","));
-    if (selectedColors.length) params.set("colors", selectedColors.join(","));
-    if (priceRange.min > 0) params.set("minPrice", priceRange.min.toString());
-    if (priceRange.max < DEFAULT_MAX)
-      params.set("maxPrice", priceRange.max.toString());
-    if (selectedAvailability.length)
-      params.set("availability", selectedAvailability.join(","));
-    if (minRating > 0) params.set("rating", minRating.toString());
-    if (sortBy !== "featured") params.set("sort", sortBy);
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery]);
 
-    const queryString = params.toString();
-
-    router.replace(`/allcollection${queryString ? `?${queryString}` : ""}`, {
-      scroll: false,
-    });
-
-    // ✅ fetch products using same query
-    fetchProducts(queryString);
+  // Immediate fetch for non-search filters
+  useEffect(() => {
+    fetchProducts();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    searchQuery,
-    selectedCategories,
-    selectedColors,
+    selectedCategory,
+    selectedColor,
     priceRange.min,
     priceRange.max,
     selectedAvailability,
@@ -106,7 +141,37 @@ export default function ShopPage() {
     sortBy,
   ]);
 
-  // Handle search (same)
+  // Update URL when filters change
+  useEffect(() => {
+    const params = new URLSearchParams();
+
+    if (searchQuery) params.set("name", searchQuery);
+    if (selectedCategory) params.set("category", selectedCategory);
+    if (selectedColor) params.set("color", selectedColor);
+    if (priceRange.min > 0) params.set("minPrice", priceRange.min.toString());
+    if (priceRange.max < DEFAULT_MAX)
+      params.set("maxPrice", priceRange.max.toString());
+    if (selectedAvailability) params.set("availability", selectedAvailability);
+    if (minRating > 0) params.set("rating", minRating.toString());
+    if (sortBy !== "featured") params.set("sort", sortBy);
+
+    const queryString = params.toString();
+    router.replace(`/allcollection${queryString ? `?${queryString}` : ""}`, {
+      scroll: false,
+    });
+  }, [
+    searchQuery,
+    selectedCategory,
+    selectedColor,
+    priceRange.min,
+    priceRange.max,
+    selectedAvailability,
+    minRating,
+    sortBy,
+    router,
+  ]);
+
+  // Handle search with history
   const handleSearch = (query: string) => {
     setSearchQuery(query);
     if (query && !searchHistory.includes(query)) {
@@ -117,125 +182,22 @@ export default function ShopPage() {
     setShowHistory(false);
   };
 
-  //  Filter products (from API data)
-  const filteredProducts = useMemo(() => {
-    return products
-      .filter((product: any) => {
-        // Search query
-        if (
-          searchQuery &&
-          !product?.name?.toLowerCase().includes(searchQuery.toLowerCase()) &&
-          !product?.description
-            ?.toLowerCase()
-            .includes(searchQuery.toLowerCase())
-        ) {
-          return false;
-        }
-
-        // Categories (API has category object)
-        if (selectedCategories.length) {
-          const cat =
-            product?.category?.name ||
-            product?.category?.slug ||
-            product?.category;
-          if (!selectedCategories.includes(cat)) return false;
-        }
-
-        // Colors (API field can be `color` or `colors`)
-        if (selectedColors.length) {
-          const pColors: string[] = product?.color || product?.colors || [];
-          if (!pColors.some((c) => selectedColors.includes(c))) return false;
-        }
-
-        // Price range (use finalPrice if available)
-        const price = Number(product?.finalPrice ?? product?.price ?? 0);
-        if (price < priceRange.min || price > priceRange.max) return false;
-
-        // Availability mapping
-        if (selectedAvailability.length) {
-          const availability = product?.inStock
-            ? "in-stock"
-            : product?.isLimited
-              ? "limited"
-              : "out-of-stock";
-
-          if (!selectedAvailability.includes(availability)) return false;
-        }
-
-        // Rating
-        if (Number(product?.rating ?? 0) < minRating) return false;
-
-        return true;
-      })
-      .sort((a: any, b: any) => {
-        const aPrice = Number(a?.finalPrice ?? a?.price ?? 0);
-        const bPrice = Number(b?.finalPrice ?? b?.price ?? 0);
-
-        switch (sortBy) {
-          case "price-low":
-            return aPrice - bPrice;
-          case "price-high":
-            return bPrice - aPrice;
-          case "rating":
-            return Number(b?.rating ?? 0) - Number(a?.rating ?? 0);
-          case "newest":
-            return (
-              new Date(b?.createdAt).getTime() -
-              new Date(a?.createdAt).getTime()
-            );
-          default:
-            return 0;
-        }
-      });
-  }, [
-    products,
-    searchQuery,
-    selectedCategories,
-    selectedColors,
-    priceRange.min,
-    priceRange.max,
-    selectedAvailability,
-    minRating,
-    sortBy,
-  ]);
-
-  // Toggle functions (same)
-  const toggleCategory = (category: string) => {
-    setSelectedCategories((prev) =>
-      prev.includes(category)
-        ? prev.filter((c) => c !== category)
-        : [...prev, category],
-    );
-  };
-
-  const toggleColor = (color: string) => {
-    setSelectedColors((prev) =>
-      prev.includes(color) ? prev.filter((c) => c !== color) : [...prev, color],
-    );
-  };
-
-  const toggleAvailability = (availability: string) => {
-    setSelectedAvailability((prev) =>
-      prev.includes(availability)
-        ? prev.filter((a) => a !== availability)
-        : [...prev, availability],
-    );
-  };
-
+  // Clear all filters
   const clearAllFilters = () => {
     setSearchQuery("");
-    setSelectedCategories([]);
-    setSelectedColors([]);
+    setSelectedCategory("");
+    setSelectedColor("");
     setPriceRange({ min: 0, max: DEFAULT_MAX });
-    setSelectedAvailability([]);
+    setSelectedAvailability("");
     setMinRating(0);
     setSortBy("featured");
   };
 
+  // Count active filters
   const activeFiltersCount =
-    selectedCategories.length +
-    selectedColors.length +
-    selectedAvailability.length +
+    (selectedCategory ? 1 : 0) +
+    (selectedColor ? 1 : 0) +
+    (selectedAvailability ? 1 : 0) +
     (priceRange.min > 0 || priceRange.max < DEFAULT_MAX ? 1 : 0) +
     (minRating > 0 ? 1 : 0);
 
@@ -342,9 +304,7 @@ export default function ShopPage() {
               </button>
 
               <span className="text-sm text-colorTextBody/60">
-                {loading
-                  ? "Loading..."
-                  : `${filteredProducts.length} Products Found`}
+                {loading ? "Loading..." : `${products.length} Products Found`}
               </span>
 
               {activeFiltersCount > 0 && (
@@ -365,6 +325,7 @@ export default function ShopPage() {
             >
               <option value="featured">Featured</option>
               <option value="newest">Newest</option>
+              <option value="oldest">Oldest</option>
               <option value="price-low">Price: Low to High</option>
               <option value="price-high">Price: High to Low</option>
               <option value="rating">Highest Rated</option>
@@ -428,24 +389,31 @@ export default function ShopPage() {
                   Categories
                 </h3>
                 <div className="space-y-2">
-                  {categories
-                    .filter((cat) => cat !== "All Categories")
-                    .map((category) => (
-                      <label
-                        key={category}
-                        className="flex items-center gap-3 cursor-pointer group"
-                      >
-                        <input
-                          type="checkbox"
-                          checked={selectedCategories.includes(category)}
-                          onChange={() => toggleCategory(category)}
-                          className="w-4 h-4 rounded border-colorBorder text-colorBtnPrimary focus:ring-colorBtnPrimary/20"
-                        />
-                        <span className="text-sm text-colorTextBody group-hover:text-colorLink">
-                          {category}
-                        </span>
-                      </label>
-                    ))}
+                  {categories.map((category) => (
+                    <label
+                      key={category.id}
+                      className="flex items-center gap-3 cursor-pointer group"
+                    >
+                      <input
+                        type="radio"
+                        name="category"
+                        checked={selectedCategory === category.id}
+                        onChange={() => setSelectedCategory(category.id)}
+                        className="w-4 h-4 border-colorBorder text-colorBtnPrimary focus:ring-colorBtnPrimary/20"
+                      />
+                      <span className="text-sm text-colorTextBody group-hover:text-colorLink">
+                        {category.name}
+                      </span>
+                    </label>
+                  ))}
+                  {selectedCategory && (
+                    <button
+                      onClick={() => setSelectedCategory("")}
+                      className="text-xs text-colorLink hover:underline ml-7"
+                    >
+                      Clear category
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -534,16 +502,25 @@ export default function ShopPage() {
                       className="flex items-center gap-3 cursor-pointer group"
                     >
                       <input
-                        type="checkbox"
-                        checked={selectedColors.includes(color)}
-                        onChange={() => toggleColor(color)}
-                        className="w-4 h-4 rounded border-colorBorder text-colorBtnPrimary focus:ring-colorBtnPrimary/20"
+                        type="radio"
+                        name="color"
+                        checked={selectedColor === color}
+                        onChange={() => setSelectedColor(color)}
+                        className="w-4 h-4 border-colorBorder text-colorBtnPrimary focus:ring-colorBtnPrimary/20"
                       />
                       <span className="text-sm text-colorTextBody group-hover:text-colorLink">
                         {color}
                       </span>
                     </label>
                   ))}
+                  {selectedColor && (
+                    <button
+                      onClick={() => setSelectedColor("")}
+                      className="text-xs text-colorLink hover:underline ml-7"
+                    >
+                      Clear color
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -572,16 +549,25 @@ export default function ShopPage() {
                       className="flex items-center gap-3 cursor-pointer group"
                     >
                       <input
-                        type="checkbox"
-                        checked={selectedAvailability.includes(status)}
-                        onChange={() => toggleAvailability(status)}
-                        className="w-4 h-4 rounded border-colorBorder text-colorBtnPrimary focus:ring-colorBtnPrimary/20"
+                        type="radio"
+                        name="availability"
+                        checked={selectedAvailability === status}
+                        onChange={() => setSelectedAvailability(status)}
+                        className="w-4 h-4 border-colorBorder text-colorBtnPrimary focus:ring-colorBtnPrimary/20"
                       />
                       <span className="text-sm text-colorTextBody group-hover:text-colorLink capitalize">
                         {status.replace("-", " ")}
                       </span>
                     </label>
                   ))}
+                  {selectedAvailability && (
+                    <button
+                      onClick={() => setSelectedAvailability("")}
+                      className="text-xs text-colorLink hover:underline ml-7"
+                    >
+                      Clear availability
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -627,6 +613,14 @@ export default function ShopPage() {
                       </div>
                     </label>
                   ))}
+                  {minRating > 0 && (
+                    <button
+                      onClick={() => setMinRating(0)}
+                      className="text-xs text-colorLink hover:underline ml-7"
+                    >
+                      Clear rating
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -653,9 +647,9 @@ export default function ShopPage() {
                   />
                 ))}
               </div>
-            ) : filteredProducts.length > 0 ? (
+            ) : products.length > 0 ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredProducts.map((product: any) => (
+                {products.map((product: any) => (
                   <CollectionProductCard
                     key={product._id || product.slug}
                     productData={product}
