@@ -159,6 +159,7 @@ export default function ShopPage() {
     router.replace(`/allcollection${queryString ? `?${queryString}` : ""}`, {
       scroll: false,
     });
+    console.log(minRating);
   }, [
     searchQuery,
     selectedCategory,
@@ -584,7 +585,7 @@ export default function ShopPage() {
                   Minimum Rating
                 </h3>
                 <div className="space-y-2">
-                  {[4, 3, 2, 1].map((rating) => (
+                  {[5, 4, 3, 2, 1].map((rating) => (
                     <label
                       key={rating}
                       className="flex items-center gap-3 cursor-pointer group"
@@ -607,9 +608,6 @@ export default function ShopPage() {
                             <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
                           </svg>
                         ))}
-                        <span className="text-sm text-colorTextBody/60 ml-1">
-                          & Up
-                        </span>
                       </div>
                     </label>
                   ))}

@@ -80,7 +80,7 @@ export default function CollectionProductCard({ productData }: any) {
   return (
     <div className="group relative bg-colorBody border border-colorBorder rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300">
       {/* Product Image */}
-      <Link href={`/product/${slug}`} className="block relative">
+      <Link href={`/productdetails/${slug}`} className="block relative">
         <div className="relative aspect-square overflow-hidden bg-colorSmallImageBg">
           <Image
             src={image}
@@ -201,7 +201,7 @@ export default function CollectionProductCard({ productData }: any) {
       {/* Product Info */}
       <div className="p-4">
         {/* Product Name */}
-        <Link href={`/product/${slug}`}>
+        <Link href={`/productdetails/${slug}`}>
           <h3 className="font-semibold text-colorTextBody text-base mb-1 hover:text-colorLink transition-colors line-clamp-1">
             {name}
           </h3>
