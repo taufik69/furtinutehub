@@ -9,6 +9,8 @@ export default function ShopPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  const [collectionProducts, setcollectionProducts] = useState([]);
+
   // State for filters
   const [searchQuery, setSearchQuery] = useState(
     searchParams.get("search") || "",
@@ -46,6 +48,23 @@ export default function ShopPage() {
     }
   }, []);
 
+  // fetch product
+  const fetchProducts = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/product/get-products`,
+        {
+          cache: "no-store",
+        },
+      );
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching products:", error);
+      return [];
+    }
+  };
+
   // Update URL when filters change
   useEffect(() => {
     const params = new URLSearchParams();
@@ -66,6 +85,12 @@ export default function ShopPage() {
     router.replace(`/allcollection${queryString ? `?${queryString}` : ""}`, {
       scroll: false,
     });
+    // fetch product api call
+    const fn = async () => {
+      const data = await fetchProducts();
+      setcollectionProducts(data.data);
+    };
+    fn();
   }, [
     searchQuery,
     selectedCategories,

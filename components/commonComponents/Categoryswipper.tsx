@@ -8,12 +8,12 @@ import { useRef } from "react";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import { CategoryCardProps } from "@/types/types";
+import { CategoryType } from "@/types/types";
 
 export default function ShopByCategorySwipper({
   categories,
 }: {
-  categories: CategoryCardProps[];
+  categories: CategoryType[];
 }) {
   const prevRef = useRef<HTMLButtonElement>(null);
   const nextRef = useRef<HTMLButtonElement>(null);
@@ -64,12 +64,12 @@ export default function ShopByCategorySwipper({
           1024: { slidesPerView: 4, spaceBetween: 30 },
         }}
       >
-        {categories.map((category) => (
+        {categories.map((category: CategoryType) => (
           <SwiperSlide key={category.id}>
             <CategoryCard
-              title={category.title}
-              imageUrl={category.imageUrl}
-              href={category.href}
+              title={category?.name}
+              imageUrl={category?.image?.url}
+              href={category?.id || ""}
             />
           </SwiperSlide>
         ))}

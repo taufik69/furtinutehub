@@ -1,9 +1,41 @@
-export interface CategoryCardProps {
-  id: number;
-  title: string;
-  imageUrl: string;
-  href: string;
+
+
+// types/category.types.ts
+
+export interface CategoryImage {
+  url: string;
+  publicId: string;
+  status: "pending" | "processing" | "uploaded" | "failed";
+  lastError?: string;
 }
+
+export interface CategorySEO {
+  metaTitle: string;
+  metaDescription: string;
+  keywords: string[];
+  ogImage: string;
+}
+
+export interface CategoryType {
+  id?: string; 
+  name: string;
+  slug: string;
+  description: string;
+
+  image: CategoryImage;
+  seo: CategorySEO;
+
+  isActive: boolean;
+  featured: boolean;
+  sortOrder: number;
+
+  filters?: string[];
+
+  createdAt: string;
+  updatedAt: string;
+ 
+}
+
 
 
 export interface ProductCardProps {

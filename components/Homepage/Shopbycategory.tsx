@@ -1,46 +1,21 @@
-import { CategoryCardProps } from "@/types/types";
 import ShopByCategorySwipper from "../commonComponents/Categoryswipper";
 
-const categories: CategoryCardProps[] = [
-  {
-    id: 1,
-    title: "Living Room",
-    imageUrl: "/images/easychair.webp",
-    href: "/category/living-room",
-  },
-  {
-    id: 2,
-    title: "Bedroom",
-    imageUrl: "/images/officedesk.webp",
-    href: "/category/bedroom",
-  },
-  {
-    id: 3,
-    title: "Dining Room",
-    imageUrl: "/images/sofa.webp",
-    href: "/category/dining-room",
-  },
-  {
-    id: 4,
-    title: "Office",
-    imageUrl: "/images/bed.webp",
-    href: "/category/office",
-  },
-  {
-    id: 5,
-    title: "Outdoor",
-    imageUrl: "/images/homeDecoram.webp",
-    href: "/category/outdoor",
-  },
-  {
-    id: 6,
-    title: "Kitchen",
-    imageUrl: "/images/sofa.webp",
-    href: "/category/kitchen",
-  },
-];
+async function getCategories() {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_API_URL}/categories/get-category`,
+    { cache: "no-store" },
+  );
 
-export default function ShopByCategory() {
+  if (!res.ok) throw new Error("Failed to fetch categories");
+
+  const data = await res.json();
+
+  return data.data;
+}
+
+export default async function ShopByCategory() {
+  const categories = await getCategories();
+
   return (
     <section className="bg-colorBody">
       <div className="container mx-auto px-4 sm:px-2 lg:px-0">
