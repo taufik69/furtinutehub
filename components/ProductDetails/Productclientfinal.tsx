@@ -8,16 +8,14 @@ export function ProductImageGallery({
   images,
   discount,
   productName,
-  colors,
-  sizes,
-  inStock,
+
+  discountType,
 }: {
   images: string[];
   discount: number;
   productName: string;
-  colors: string[];
-  sizes: string[];
-  inStock: boolean;
+
+  discountType: string;
 }) {
   const [selectedImage, setSelectedImage] = useState(0);
 
@@ -39,7 +37,7 @@ export function ProductImageGallery({
         />
         {discount > 0 && (
           <div className="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-semibold shadow-lg">
-            -{discount}%
+            -{discountType === "percentage" ? `${discount}%` : `${discount} Tk`}
           </div>
         )}
 
@@ -74,7 +72,7 @@ export function ProductImageGallery({
               onClick={() => setSelectedImage(idx)}
               className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${
                 selectedImage === idx
-                  ? "border-colorBtnPrimary ring-2 ring-colorBtnPrimary/20"
+                  ? "border-colorBtnPrimary ring-1 ring-colorBtnPrimary/20"
                   : "border-colorBorder hover:border-colorBtnPrimary/50"
               }`}
             >
