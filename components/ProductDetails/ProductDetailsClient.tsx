@@ -4,6 +4,8 @@ import Link from "next/link";
 import CollectionProductCard from "@/components/commonComponents/Productcardupdated";
 import { ProductImageGallery } from "@/components/ProductDetails/Productclientfinal";
 import { useState } from "react";
+import { addToCart } from "@/lib/cart.db";
+import { Bounce, toast } from "react-toastify";
 
 export default function ProductDetailsClient({
   product,
@@ -16,6 +18,7 @@ export default function ProductDetailsClient({
   const [selectedColor, setSelectedColor] = useState(product?.color?.[0] || "");
   const [selectedSize, setSelectedSize] = useState(product?.size?.[0] || "");
   const [wishlist, setWishlist] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
 
   // Extract images from API structure
   const images =
@@ -25,12 +28,40 @@ export default function ProductDetailsClient({
   const discountValue = product?.discountValue || 0;
   const inStock = product?.inStock ?? true;
 
-  const handleAddToCart = () => {
-    alert(
-      `Added ${quantity} ${product?.name} to cart!\nColor: ${selectedColor}${
-        selectedSize ? `\nSize: ${selectedSize}` : ""
-      }`,
-    );
+  const handleAddToCart = async () => {
+    if (!inStock) return;
+
+    try {
+      setIsAdding(true);
+
+      await addToCart({
+        key: `${product?.slug}:${selectedColor || "default"}:${selectedSize || "default"}`,
+        productId: product?._id,
+        name: product?.name,
+        slug: product?.slug,
+        image:
+          product?.image?.[0]?.optimized_url || product?.image?.[0]?.url || "",
+        price: Number(product?.finalPrice ?? product?.price ?? 0),
+        qty: quantity,
+        color: selectedColor || null,
+        size: selectedSize || null,
+      });
+      toast.success(`Added ${quantity} ${product?.name} to cart!`, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "light",
+        transition: Bounce,
+      });
+    } catch (err) {
+      console.error("Add to cart failed", err);
+    } finally {
+      setIsAdding(false);
+    }
   };
 
   const handleWhatsApp = () => {
@@ -343,27 +374,54 @@ export default function ProductDetailsClient({
               {/* Add to Cart */}
               <button
                 onClick={handleAddToCart}
-                disabled={!inStock}
+                disabled={!inStock || isAdding}
                 className={`w-full py-4 px-6 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 ${
                   inStock
                     ? "bg-colorBtnPrimary text-colorBtnPrimaryText hover:bg-colorBtnPrimary/90 active:scale-95"
                     : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                }`}
+                } ${isAdding ? "opacity-80" : ""}`}
               >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
-                  />
-                </svg>
-                {inStock ? "Add to Cart" : "Out of Stock"}
+                {isAdding ? (
+                  <>
+                    <svg
+                      className="animate-spin h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                      />
+                    </svg>
+                    Adding...
+                  </>
+                ) : (
+                  <>
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"
+                      />
+                    </svg>
+                    {inStock ? "Add to Cart" : "Out of Stock"}
+                  </>
+                )}
               </button>
 
               {/* WhatsApp Button */}

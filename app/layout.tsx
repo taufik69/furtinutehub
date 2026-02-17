@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import Footer from "@/components/commonComponents/Footer";
 import Navbar from "@/components/Homepage/Navbar";
+import { ToastContainer } from "react-toastify";
 
 const geistSans = Poppins({
   variable: "--font-poppins",
@@ -24,6 +25,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable} `}>
         <Navbar />
+        <ToastContainer />
         {children}
         <Footer />
       </body>

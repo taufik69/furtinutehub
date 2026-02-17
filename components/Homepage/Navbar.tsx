@@ -5,12 +5,14 @@ import { useState } from "react";
 import MobileNavbar from "./MobileNavbar";
 import NavbarWrapper from "./NavbarWrapper";
 import BottomNavBar from "./Bottomnavbar";
+import { useCart } from "@/lib/useCart";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
   const openMenu = () => setIsOpen(true);
   const closeMenu = () => setIsOpen(false);
+  const { count } = useCart();
 
   return (
     <div>
@@ -21,7 +23,7 @@ export default function Navbar() {
             <div className="shrink-0">
               <Link href="/" className="bg-[#FF6B4A] px-4 py-2 rounded block">
                 <span className="text-white font-bold text-2xl italic">
-                  GRID
+                  Frid
                 </span>
               </Link>
             </div>
@@ -31,7 +33,7 @@ export default function Navbar() {
               {[
                 { id: 2, name: "Home", href: "/" },
                 { id: 1, name: "All Collection", href: "/allcollection" },
-                { id: 4, name: "Videos", href: "#" },
+                // { id: 4, name: "Videos", href: "#" },
                 { id: 5, name: "Articles", href: "/articles" },
                 { id: 6, name: "About", href: "/studio" },
                 { id: 7, name: "Contact", href: "/contact" },
@@ -66,23 +68,9 @@ export default function Navbar() {
                   </svg>
                 </button>
 
-                <button className="transition-colors">
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
-                </button>
-
-                <button className="relative">
+                {/* cart icon */}
+                <Link href="/cart" className="relative">
+                  {/* Cart SVG */}
                   <svg
                     className="w-5 h-5"
                     fill="none"
@@ -96,7 +84,14 @@ export default function Navbar() {
                       d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
                     />
                   </svg>
-                </button>
+
+                  {/* Badge */}
+                  {count > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-colorCartDot text-white text-xs font-semibold rounded-full w-5 h-5 flex items-center justify-center px-1">
+                      {count}
+                    </span>
+                  )}
+                </Link>
               </div>
 
               {/* Mobile hamburger (vertical bars) */}
