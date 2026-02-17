@@ -45,38 +45,32 @@ export default function CheckoutPage() {
     const orderPayload = {
       customer: {
         fullName: fullName.trim(),
-        phone: `+880${phone.trim()}`,
+        phone: `${phone.trim()}`,
         address: address.trim(),
       },
       note: note.trim() || null,
       paymentMethod: "cod",
       items: items.map((it) => ({
         productId: it.productId,
-        name: it.name,
-        slug: it.slug,
-        image: it.image,
-        price: it.price,
         qty: it.qty,
         color: it.color || null,
         size: it.size || null,
       })),
-      totalQty,
-      subtotal,
     };
 
     try {
-      //   const res = await fetch(
-      //     `${process.env.NEXT_PUBLIC_API_URL}/order/create`,
-      //     {
-      //       method: "POST",
-      //       headers: { "Content-Type": "application/json" },
-      //       body: JSON.stringify(orderPayload),
-      //     },
-      //   );
-      //   const data = await res.json();
-      //   if (!res.ok) throw new Error(data?.message || "Order failed.");
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/order/create-order`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(orderPayload),
+        },
+      );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.message || "Order failed.");
       await clearCart();
-      //   setOrderId(data?.data?._id || data?.orderId || null);
+      setOrderId(data?.data?._id || data?.orderId || null);
       console.log(orderPayload);
       setStatus("success");
     } catch (err: any) {
@@ -88,7 +82,7 @@ export default function CheckoutPage() {
   // ── Success Screen ────────────────────────────────────────────
   if (status === "success") {
     return (
-      <div className="container  mx-auto min-h-screen bg-colorBody flex items-center justify-center px-4">
+      <div className="container  mx-auto min-h-screen bg-colorBody flex items-center justify-center px-4 ">
         <div className="bg-colorBodyDim/40 border border-colorBorder rounded-xl p-8 max-w-md w-full text-center space-y-5">
           <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto">
             <svg
@@ -115,7 +109,7 @@ export default function CheckoutPage() {
             </p>
           </div>
           {orderId && (
-            <div className="bg-colorBodyDim rounded-lg px-4 py-3">
+            <div className="bg-colorBodyDim rounded-lg px-4 py-3 mt-4 mb-4">
               <p className="text-xs text-colorTextBody/50 mb-1">Order ID</p>
               <p className="font-mono text-sm font-bold text-colorTextBody break-all">
                 {orderId}
@@ -432,7 +426,7 @@ export default function CheckoutPage() {
 
               {/* Error */}
               {status === "error" && (
-                <div className="bg-red-50 border  border-red-200 rounded-lg px-4 py-3 text-sm text-red-600">
+                <div className="bg-red-50 border  mb-4 border-red-200 rounded-lg px-4 py-3 text-sm text-red-600">
                   {errorMsg}
                 </div>
               )}
