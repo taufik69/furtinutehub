@@ -1,25 +1,8 @@
-import React, { Suspense } from "react";
-import SellingProductGrid from "./SellingProductGrid";
-import fs from "fs";
-import path from "path";
-import { products } from "@/data/data";
-import { ProductCardProps } from "@/types/types";
-import NewArrivalProductGrid from "./NewArrivalProductGrid";
+import dynamic from "next/dynamic";
+import { Suspense } from "react";
+const SellingProductGrid = dynamic(() => import("./SellingProductGrid"));
 
 const NewArrival = () => {
-  const imagedir = fs.readdirSync(
-    path.join(process.cwd(), "public", "newArrival"),
-  );
-
-  const newArrivalData = products.map(
-    (product: ProductCardProps, index: number): ProductCardProps => {
-      return {
-        ...product,
-        image: `/newArrival/${imagedir[index % imagedir.length]}`,
-      };
-    },
-  );
-
   return (
     <section className=" bg-colorBody">
       <div className="container mx-auto px-4 sm:px-6 lg:px-0">
@@ -36,7 +19,7 @@ const NewArrival = () => {
 
         {/* Products Grid */}
         <Suspense fallback={<div>Loading...</div>}>
-          <NewArrivalProductGrid newArrivalData={newArrivalData} />
+          <SellingProductGrid query="newest" />
         </Suspense>
       </div>
     </section>

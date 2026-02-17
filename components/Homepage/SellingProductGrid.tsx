@@ -1,12 +1,10 @@
 "use client";
-
+import dynamic from "next/dynamic";
 import { useEffect, useMemo, useState } from "react";
-// import ProductCard from "../commonComponents/Productcard";
 import { getBestSelling } from "@/app/api/api";
-import CollectionProductCard from "../commonComponents/Productcardupdated";
-import ProductCard from "../commonComponents/Productcard";
+const ProductCard = dynamic(() => import("../commonComponents/Productcard"));
 
-export default function SellingProductGrid() {
+export default function SellingProductGrid({ query }: { query: string }) {
   const STEP = 8;
 
   const [products, setProducts] = useState<any[]>([]);
@@ -19,7 +17,7 @@ export default function SellingProductGrid() {
     const load = async () => {
       setLoading(true);
       try {
-        const data = await getBestSelling();
+        const data = await getBestSelling(query);
         if (mounted) setProducts(Array.isArray(data) ? data : []);
       } finally {
         if (mounted) setLoading(false);

@@ -19,7 +19,7 @@ const BestSelling = () => {
 
         {/* Products Grid */}
         <Suspense fallback={<div>Loading...</div>}>
-          <SellingProductGrid />
+          <SellingProductGrid query="isBestSelling" />
         </Suspense>
       </div>
     </section>

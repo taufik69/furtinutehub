@@ -18,7 +18,7 @@ export default function ProductCard({ productData }: { productData: any }) {
     productData?.image?.[0]?.optimized_url ||
     productData?.image?.[0]?.url ||
     productData?.category?.image?.url ||
-    "/images/placeholder.png";
+    "/images/sofa.webp";
 
   // price mapping
   const price = Number(productData?.finalPrice ?? productData?.price ?? 0);
