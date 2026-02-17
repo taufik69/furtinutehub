@@ -31,8 +31,6 @@ export default function CheckoutPage() {
     () => items.reduce((sum, it) => sum + it.qty, 0),
     [items],
   );
-  const deliveryCharge = subtotal >= 5000 ? 0 : 150;
-  const total = subtotal + deliveryCharge;
 
   const handleSubmit = async () => {
     if (!fullName.trim()) return alert("Please enter your full name.");
@@ -62,9 +60,8 @@ export default function CheckoutPage() {
         color: it.color || null,
         size: it.size || null,
       })),
+      totalQty,
       subtotal,
-      deliveryCharge,
-      total,
     };
 
     try {
@@ -401,7 +398,7 @@ export default function CheckoutPage() {
               </div>
 
               {/* Price Breakdown */}
-              <div className="flex flex-col gap-3 py-4">
+              <div className="flex flex-col gap-3 py-2">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-colorTextBody/60">
                     Subtotal ({totalQty} items)
@@ -412,13 +409,8 @@ export default function CheckoutPage() {
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-colorTextBody/60">Delivery</span>
-                  {deliveryCharge === 0 ? (
-                    <span className="text-green-600 font-medium">Free</span>
-                  ) : (
-                    <span className="font-medium text-colorTextBody">
-                      ৳ {deliveryCharge}
-                    </span>
-                  )}
+
+                  <span className="font-medium text-green-600">৳ Free</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-colorTextBody/60">Payment</span>
@@ -433,13 +425,13 @@ export default function CheckoutPage() {
               <div className="flex items-center justify-between ">
                 <span className="font-bold text-colorTextBody mb-6">Total</span>
                 <span className="text-xl font-bold text-colorTextBody">
-                  ৳ {total.toLocaleString("en-BD")}
+                  ৳ {subtotal.toLocaleString("en-BD")}
                 </span>
               </div>
 
               {/* Error */}
               {status === "error" && (
-                <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-600">
+                <div className="bg-red-50 border  border-red-200 rounded-lg px-4 py-3 text-sm text-red-600">
                   {errorMsg}
                 </div>
               )}
