@@ -65,18 +65,19 @@ export default function CheckoutPage() {
     };
 
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/order/create`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(orderPayload),
-        },
-      );
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.message || "Order failed.");
+      //   const res = await fetch(
+      //     `${process.env.NEXT_PUBLIC_API_URL}/order/create`,
+      //     {
+      //       method: "POST",
+      //       headers: { "Content-Type": "application/json" },
+      //       body: JSON.stringify(orderPayload),
+      //     },
+      //   );
+      //   const data = await res.json();
+      //   if (!res.ok) throw new Error(data?.message || "Order failed.");
       await clearCart();
-      setOrderId(data?.data?._id || data?.orderId || null);
+      //   setOrderId(data?.data?._id || data?.orderId || null);
+      console.log(orderPayload);
       setStatus("success");
     } catch (err: any) {
       setErrorMsg(err?.message || "Something went wrong.");
@@ -87,7 +88,7 @@ export default function CheckoutPage() {
   // ── Success Screen ────────────────────────────────────────────
   if (status === "success") {
     return (
-      <div className="min-h-screen bg-colorBody flex items-center justify-center px-4">
+      <div className="container  mx-auto min-h-screen bg-colorBody flex items-center justify-center px-4">
         <div className="bg-colorBodyDim/40 border border-colorBorder rounded-xl p-8 max-w-md w-full text-center space-y-5">
           <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center mx-auto">
             <svg
@@ -105,10 +106,10 @@ export default function CheckoutPage() {
             </svg>
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-colorTextBody">
+            <h2 className="text-2xl font-bold text-colorTextBody ">
               Order Placed!
             </h2>
-            <p className="text-colorTextBody/60 text-sm mt-2">
+            <p className="text-colorTextBody/60 text-sm mt-5">
               We'll contact you at <strong>+880{phone}</strong> to confirm your
               delivery.
             </p>

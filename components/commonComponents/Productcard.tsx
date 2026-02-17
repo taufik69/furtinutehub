@@ -2,36 +2,32 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
-interface ProductCardProps {
-  id: string | number;
-  name: string;
-  description: string;
-  image: string;
-  price: number;
-  originalPrice?: number;
-  discount?: number;
-  tags?: string[];
-  slug: string;
-}
-
-export default function ProductCard({
-  name,
-  description,
-  image,
-  price,
-  originalPrice,
-  discount,
-  tags = [],
-  slug,
-}: ProductCardProps) {
+export default function ProductCard({ product }: { product: any }) {
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isAddingToCart, setIsAddingToCart] = useState(false);
 
-  const hasDiscount = discount && discount > 0;
-  const formattedPrice = price.toLocaleString("en-BD");
-  const formattedOriginalPrice = originalPrice?.toLocaleString("en-BD");
+  const formattedPrice = product.price.toLocaleString("en-BD");
+  const formattedFinalPrice = product.finalPrice?.toLocaleString("en-BD");
+  const image = product.image?.[0]?.optimized_url || product.image?.[0]?.url;
+
+  // discount label
+  const discountLabel =
+    product?.discountType === "percentage"
+      ? `${product?.discountValue}%`
+      : `${product?.discountValue}৳`;
+
+  const hasDiscount = Number(product?.discountValue ?? 0) > 0;
+
+  const tags = useMemo(() => {
+    const t: string[] = [];
+    if (product?.isNew) t.push("new");
+    if (product?.isSale) t.push("sale");
+    if (product?.isHot) t.push("hot");
+    if (product?.isLimited) t.push("limited");
+    return t;
+  }, [product]);
 
   const getTagColor = (tag: string) => {
     switch (tag) {
@@ -55,11 +51,11 @@ export default function ProductCard({
   return (
     <div className="group relative bg-colorBody border border-colorBorder rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300">
       {/* Product Image */}
-      <Link href={`/productdetails/${slug}`} className="block relative">
+      <Link href={`/productdetails/${product.slug}`} className="block relative">
         <div className="relative aspect-square overflow-hidden bg-colorSmallImageBg">
           <Image
             src={image}
-            alt={name}
+            alt={product.name}
             width={400}
             height={400}
             className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
@@ -81,7 +77,7 @@ export default function ProductCard({
               ))}
               {hasDiscount && (
                 <span className="bg-colorSaleTag text-colorSaleTagText px-3 py-1 rounded text-xs font-semibold">
-                  -{discount}%
+                  -{discountLabel}
                 </span>
               )}
             </div>
@@ -191,22 +187,22 @@ export default function ProductCard({
       {/* Product Info */}
       <div className="p-4">
         {/* Product Name */}
-        <Link href={`/productdetails/${slug}`}>
+        <Link href={`/productdetails/${product.slug}`}>
           <h3 className="font-semibold text-colorTextBody text-base mb-1 hover:text-colorLink transition-colors line-clamp-1">
-            {name}
+            {product.name}
           </h3>
         </Link>
 
         {/* Product Description */}
         <p className="text-colorTextBody/60 text-sm mb-3 line-clamp-1">
-          {description}
+          {product.description}
         </p>
 
         {/* Price */}
         <div className="flex items-center gap-2">
-          {originalPrice && (
+          {product.finalPrice && (
             <span className="text-colorTextBody/40 text-sm line-through">
-              ৳ {formattedOriginalPrice}
+              ৳ {formattedFinalPrice}
             </span>
           )}
           <span className="text-colorSalePrice font-bold text-lg">

@@ -19,19 +19,13 @@ export default function HomePage() {
         <BestSelling />
       </section>
       <section className="py-4 sm:py-4 lg:py-25 ">
-        <NewArrival />
+        {/* <NewArrival /> */}
       </section>
 
-      <section>
-        <ProductGridSection />
-      </section>
+      <section>{/* <ProductGridSection /> */}</section>
 
-      <section>
-        <ServicesSection />
-      </section>
-      <section>
-        <CustomerFeedback />
-      </section>
+      <section>{/* <ServicesSection /> */}</section>
+      <section>{/* <CustomerFeedback /> */}</section>
     </main>
   );
 }

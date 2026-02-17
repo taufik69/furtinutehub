@@ -2,34 +2,38 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useMemo } from "react";
+import { useMemo, useState } from "react";
 
-export default function CollectionProductCard({ productData }: any) {
+export default function ProductCard({ productData }: { productData: any }) {
+  const [isWishlisted, setIsWishlisted] = useState(false);
+  const [isAddingToCart, setIsAddingToCart] = useState(false);
+
   // --------- dynamic mapping from API product ----------
   const name = productData?.name ?? "";
   const slug = productData?.slug ?? "";
   const description =
     productData?.shortDescription ?? productData?.description ?? "";
 
-  // image: prefer optimized_url then url
   const image =
     productData?.image?.[0]?.optimized_url ||
     productData?.image?.[0]?.url ||
     productData?.category?.image?.url ||
     "/images/placeholder.png";
 
-  const rating = Number(productData?.rating ?? 0);
-  const reviewCount = Number(productData?.totalReviews ?? 0);
+  // price mapping
+  const price = Number(productData?.finalPrice ?? productData?.price ?? 0);
+  const originalPrice =
+    productData?.discountValue > 0
+      ? Number(productData?.price ?? 0)
+      : undefined;
 
-  // prices
-  const finalPrice = Number(productData?.finalPrice ?? 0);
-  const discountPrice = productData?.price;
-
-  // discount percent (if backend gives discountValue)
-  const discount =
+  // discount label
+  const discountLabel =
     productData?.discountType === "percentage"
       ? `${productData?.discountValue}%`
       : `${productData?.discountValue}৳`;
+
+  const hasDiscount = Number(productData?.discountValue ?? 0) > 0;
 
   // tags from backend booleans
   const tags = useMemo(() => {
@@ -41,10 +45,8 @@ export default function CollectionProductCard({ productData }: any) {
     return t;
   }, [productData]);
 
-  //  --------- original UI logic (unchanged) ----------
-
-  const formattedPrice = discountPrice.toLocaleString("en-BD");
-  const formattedFinalPrice = finalPrice?.toLocaleString("en-BD");
+  const formattedPrice = price.toLocaleString("en-BD");
+  const formattedOriginalPrice = originalPrice?.toLocaleString("en-BD");
 
   const getTagColor = (tag: string) => {
     switch (tag) {
@@ -61,22 +63,9 @@ export default function CollectionProductCard({ productData }: any) {
     }
   };
 
-  const getTagLabel = (tag: string) => {
-    return tag.toUpperCase();
-  };
+  const getTagLabel = (tag: string) => tag.toUpperCase();
 
-  const getAvailabilityColor = (stock: number) => {
-    if (stock === 0) return "text-red-600 ";
-    if (stock > 0) return "text-green-600 ";
-    if (stock < 5) return "text-yellow-600 ";
-  };
-
-  const getAvailabilityText = (stock: number) => {
-    if (stock === 0) return "Out of Stock";
-    if (stock > 0) return "In Stock";
-    if (stock < 5) return "Low Stock";
-  };
-
+  // --------- UI (same design) ----------
   return (
     <div className="group relative bg-colorBody border border-colorBorder rounded-lg overflow-hidden hover:shadow-xl transition-all duration-300">
       {/* Product Image */}
@@ -87,23 +76,12 @@ export default function CollectionProductCard({ productData }: any) {
             alt={name}
             width={400}
             height={400}
-            className={`object-cover w-full h-full group-hover:scale-105 transition-transform duration-500 ${
-              productData.stock === 0 ? "opacity-50" : ""
-            }`}
+            className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
           />
 
-          {/* Out of Stock Overlay */}
-          {productData.stock === 0 && (
-            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-              <span className="bg-red-600 text-white px-4 py-2 rounded-lg font-semibold">
-                OUT OF STOCK
-              </span>
-            </div>
-          )}
-
           {/* Tags - Top Left */}
-          {(tags.length > 0 || productData?.discountValue > 0) && (
+          {(tags.length > 0 || hasDiscount) && (
             <div className="absolute top-3 left-3 flex flex-col gap-2">
               {tags.map((tag) => (
                 <span
@@ -115,9 +93,9 @@ export default function CollectionProductCard({ productData }: any) {
                   {getTagLabel(tag)}
                 </span>
               ))}
-              {productData?.discountValue > 0 && (
+              {hasDiscount && (
                 <span className="bg-colorSaleTag text-colorSaleTagText px-3 py-1 rounded text-xs font-semibold">
-                  {discount}
+                  -{discountLabel}
                 </span>
               )}
             </div>
@@ -127,12 +105,16 @@ export default function CollectionProductCard({ productData }: any) {
           <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             {/* Wishlist Button */}
             <button
+              onClick={(e) => {
+                e.preventDefault();
+                setIsWishlisted((p) => !p);
+              }}
               className="bg-colorBtnPrimaryText hover:bg-colorBtnPrimary text-colorTextBody hover:text-colorBtnPrimaryText p-2 rounded-full shadow-md transition-all duration-200"
               aria-label="Add to wishlist"
             >
               <svg
                 className="w-5 h-5"
-                fill={"currentColor"}
+                fill={isWishlisted ? "currentColor" : "none"}
                 stroke="currentColor"
                 viewBox="0 0 24 24"
               >
@@ -147,6 +129,7 @@ export default function CollectionProductCard({ productData }: any) {
 
             {/* Quick View Button */}
             <button
+              onClick={(e) => e.preventDefault()}
               className="bg-colorBtnPrimaryText hover:bg-colorBtnPrimary text-colorTextBody hover:text-colorBtnPrimaryText p-2 rounded-full shadow-md transition-all duration-200"
               aria-label="Quick view"
             >
@@ -173,9 +156,44 @@ export default function CollectionProductCard({ productData }: any) {
           </div>
 
           {/* Add to Cart Button - Slides up on hover */}
-          {productData?.stock !== 0 && (
-            <div className="absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-              <button className="w-full bg-colorBtnPrimary hover:bg-colorBtnPrimaryDim text-colorBtnPrimaryText py-3 px-4 flex items-center justify-center gap-2 font-medium transition-colors duration-200 disabled:opacity-50">
+          <div className="absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+            <button
+              disabled={isAddingToCart}
+              onClick={(e) => {
+                e.preventDefault();
+                setIsAddingToCart(true);
+
+                // TODO: এখানে তোমার indexedDB addToCart call বসাবে
+                // await addToCart(...)
+
+                setTimeout(() => setIsAddingToCart(false), 800);
+              }}
+              className="w-full bg-colorBtnPrimary hover:bg-colorBtnPrimaryDim text-colorBtnPrimaryText py-3 px-4 flex items-center justify-center gap-2 font-medium transition-colors duration-200 disabled:opacity-50"
+            >
+              {isAddingToCart ? (
+                <>
+                  <svg
+                    className="animate-spin h-5 w-5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                  Adding...
+                </>
+              ) : (
                 <>
                   <svg
                     className="w-5 h-5"
@@ -192,9 +210,9 @@ export default function CollectionProductCard({ productData }: any) {
                   </svg>
                   Add to Cart
                 </>
-              </button>
-            </div>
-          )}
+              )}
+            </button>
+          </div>
         </div>
       </Link>
 
@@ -208,51 +226,17 @@ export default function CollectionProductCard({ productData }: any) {
         </Link>
 
         {/* Product Description */}
-        <p className="text-colorTextBody/60 text-sm mb-2 line-clamp-1">
+        <p className="text-colorTextBody/60 text-sm mb-3 line-clamp-1">
           {description}
         </p>
 
-        {/* Rating */}
-        <div className="flex items-center gap-2 mb-2">
-          <div className="flex items-center">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <svg
-                key={i}
-                className={`w-4 h-4 ${
-                  i < Math.floor(rating)
-                    ? "text-yellow-500"
-                    : i < rating
-                      ? "text-yellow-500"
-                      : "text-gray-300"
-                }`}
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-              </svg>
-            ))}
-          </div>
-          <span className="text-xs text-colorTextBody/60">
-            {rating} ({reviewCount})
-          </span>
-        </div>
-
-        {/* Availability */}
-        <div className="mb-3">
-          <span
-            className={`text-xs font-medium ${getAvailabilityColor(productData?.stock)}`}
-          >
-            {getAvailabilityText(productData?.stock)}
-          </span>
-        </div>
-
         {/* Price */}
         <div className="flex items-center gap-2">
-          {finalPrice && (
+          {originalPrice ? (
             <span className="text-colorTextBody/40 text-sm line-through">
-              ৳ {formattedFinalPrice}
+              ৳ {formattedOriginalPrice}
             </span>
-          )}
+          ) : null}
           <span className="text-colorSalePrice font-bold text-lg">
             ৳ {formattedPrice}
           </span>
