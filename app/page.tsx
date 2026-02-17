@@ -1,10 +1,24 @@
-import BestSelling from "@/components/Homepage/BestSelling";
-import ProductGridSection from "@/components/Homepage/CategoryProductTabs";
-import CustomerFeedback from "@/components/Homepage/CustomerFeedback";
-import HeroBanner from "@/components/Homepage/Herobanner";
-import NewArrival from "@/components/Homepage/NewArrival";
-import ServicesSection from "@/components/Homepage/ServicesSection";
-import ShopByCategory from "@/components/Homepage/Shopbycategory";
+import dynamic from "next/dynamic";
+const BestSelling = dynamic(() => import("@/components/Homepage/BestSelling"));
+const ProductGridSection = dynamic(
+  () => import("@/components/Homepage/CategoryProductTabs"),
+);
+
+const CustomerFeedback = dynamic(
+  () => import("@/components/Homepage/CustomerFeedback"),
+);
+
+const HeroBanner = dynamic(() => import("@/components/Homepage/Herobanner"));
+
+const NewArrival = dynamic(() => import("@/components/Homepage/NewArrival"));
+
+const ServicesSection = dynamic(
+  () => import("@/components/Homepage/ServicesSection"),
+);
+
+const ShopByCategory = dynamic(
+  () => import("@/components/Homepage/Shopbycategory"),
+);
 
 export default function HomePage() {
   return (
