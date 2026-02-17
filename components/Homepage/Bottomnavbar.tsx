@@ -1,10 +1,12 @@
 "use client";
 
+import { useCart } from "@/lib/useCart";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 export default function BottomNavBar() {
   const pathname = usePathname();
+  const { count } = useCart();
 
   const navItems = [
     {
@@ -111,7 +113,7 @@ export default function BottomNavBar() {
                 {/* Badge for Cart */}
                 {item.badge && (
                   <span className="absolute -top-2 -right-2 bg-colorCartDot text-white text-xs w-4 h-4 flex items-center justify-center rounded-full font-bold">
-                    {item.badge}
+                    {count}
                   </span>
                 )}
               </div>
