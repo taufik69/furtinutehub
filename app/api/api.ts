@@ -7,7 +7,7 @@ export const getBestSelling = async (query: string) => {
         );
 
         const data = await res.json();
-        console.log(data)
+
         return data?.data || [];
     } catch (error) {
         console.error("Error fetching best selling products:", error);
