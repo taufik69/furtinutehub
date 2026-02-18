@@ -246,7 +246,7 @@ export default function CheckoutPage() {
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="1XXXXXXXXX"
-                      className="w-full pl-16 pr-4  px-4 py-3 rounded-lg border border-colorBorder bg-colorInputBg text-colorInputText placeholder:text-colorTextBody/30 focus:outline-none focus:ring-1 focus:ring-colorBtnPrimary/40"
+                      className="w-full   px-4 py-3 rounded-lg border border-colorBorder bg-colorInputBg text-colorInputText placeholder:text-colorTextBody/30 focus:outline-none focus:ring-1 focus:ring-colorBtnPrimary/40"
                     />
                   </div>
                 </div>

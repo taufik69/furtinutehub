@@ -353,7 +353,7 @@ export default function ProductDetailsClient({
                   </svg>
                 </button>
               </div>
-              <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center justify-between mb-3 gap-x-4">
                 <h3 className="font-semibold text-colorTextBody text-sm">
                   Quantity
                 </h3>
