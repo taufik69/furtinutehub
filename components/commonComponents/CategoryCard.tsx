@@ -13,7 +13,11 @@ export default function CategoryCard({
   href,
 }: CategoryCardProps) {
   return (
-    <Link href={href} className="group block">
+    <Link
+      href={`/allcollection?category=${href}`}
+      target={"_self"}
+      className="group block"
+    >
       <div className="relative overflow-hidden rounded-lg shadow-md hover:shadow-xl transition-all duration-300">
         {/* Image Container */}
         <div className="relative w-full aspect-3/4 overflow-hidden">
