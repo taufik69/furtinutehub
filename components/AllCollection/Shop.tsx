@@ -277,11 +277,11 @@ export default function ShopPage() {
           </div>
 
           {/* Filter Summary */}
-          <div className="flex items-center justify-between mt-4">
-            <div className="flex items-center gap-3 flex-wrap">
+          <div className="flex items-center justify-between ">
+            <div className="flex items-center gap-3 mt-8 flex-wrap">
               <button
                 onClick={() => setShowFilters(!showFilters)}
-                className="lg:hidden flex items-center gap-2 px-4 py-2 bg-colorBtnPrimary text-colorBtnPrimaryText rounded-lg"
+                className="lg:hidden flex items-center gap-2 px-4 py-1 bg-colorBtnPrimary text-colorBtnPrimaryText rounded-lg"
               >
                 <svg
                   className="w-5 h-5"
