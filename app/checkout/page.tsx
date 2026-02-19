@@ -16,6 +16,7 @@ export default function CheckoutPage() {
   const [status, setStatus] = useState<OrderStatus>("idle");
   const [orderId, setOrderId] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
+  const [deliveryCharge, setDeliveryCharge] = useState(350);
 
   useEffect(() => {
     getCart()
@@ -56,6 +57,7 @@ export default function CheckoutPage() {
         color: it.color || null,
         size: it.size || null,
       })),
+      deliveryCharge: subtotal > 3000 ? 0 : deliveryCharge,
     };
 
     try {
@@ -405,7 +407,9 @@ export default function CheckoutPage() {
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-colorTextBody/60">Delivery</span>
 
-                  <span className="font-medium text-green-600">৳ Free</span>
+                  <span className="font-medium text-green-600">
+                    {subtotal >= 3000 ? "Free" : `৳${deliveryCharge}`}
+                  </span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-colorTextBody/60">Payment</span>
@@ -420,7 +424,7 @@ export default function CheckoutPage() {
               <div className="flex items-center justify-between ">
                 <span className="font-bold text-colorTextBody mb-6">Total</span>
                 <span className="text-xl font-bold text-colorTextBody">
-                  ৳ {subtotal.toLocaleString("en-BD")}
+                  ৳ {subtotal >= 3000 ? subtotal : subtotal + deliveryCharge}
                 </span>
               </div>
 

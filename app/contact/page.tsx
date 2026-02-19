@@ -139,13 +139,42 @@ export default function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
+  // (optional) you can show error message if you want later (UI untouched now)
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    setSubmitError(null);
 
-    // Simulate form submission
-    setTimeout(() => {
-      setIsSubmitting(false);
+    try {
+      const API = process.env.NEXT_PUBLIC_API_URL; // https://furniturebackend-0hrb.onrender.com/api/v1
+
+      const res = await fetch(`${API}/contact/create-contact`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phoneNumber: formData.phone, // backend expects phoneNumber
+          subject: formData.subject, // keep if backend accepts; remove if not needed
+          message: formData.message,
+        }),
+      });
+
+      // try to parse response safely
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        const msg =
+          data?.message ||
+          data?.error ||
+          `Failed to submit (status ${res.status})`;
+        throw new Error(msg);
+      }
+
       setSubmitSuccess(true);
       setFormData({
         name: "",
@@ -155,9 +184,14 @@ export default function ContactPage() {
         message: "",
       });
 
-      // Reset success message after 5 seconds
       setTimeout(() => setSubmitSuccess(false), 5000);
-    }, 1500);
+    } catch (err: any) {
+      setSubmitError(err?.message || "Something went wrong!");
+      // (UI untouched) — success card exists; if you want, I can add an error card with same styling
+      console.error("Contact submit error:", err);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (
@@ -376,6 +410,9 @@ export default function ContactPage() {
                     </>
                   )}
                 </button>
+
+                {/* (optional) UI untouched: we are not rendering submitError.
+                    If you want, I can add a red error card same style as success card. */}
               </form>
             </div>
 

@@ -16,6 +16,7 @@ export default function CartPage() {
   const [loading, setLoading] = useState(true);
   const [busyKey, setBusyKey] = useState<string | null>(null);
   const [clearing, setClearing] = useState(false);
+  const [deliveryCharge, setDeliveryCharge] = useState(350);
 
   const loadCart = async () => {
     setLoading(true);
@@ -30,7 +31,7 @@ export default function CartPage() {
   useEffect(() => {
     loadCart();
 
-    // ✅ other pages addToCart করলে auto update
+    // other pages addToCart করলে auto update
     const onChange = () => loadCart();
     window.addEventListener("cart:changed", onChange);
     return () => window.removeEventListener("cart:changed", onChange);
@@ -271,7 +272,10 @@ export default function CartPage() {
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-colorTextBody/60">Delivery</span>
-                  <span className="text-green-600 font-medium">Free</span>
+                  <span className="text-green-600 font-medium">
+                    {" "}
+                    {subtotal >= 3000 ? "Free" : `৳${deliveryCharge}`}
+                  </span>
                 </div>
               </div>
 
@@ -281,7 +285,12 @@ export default function CartPage() {
               <div className="flex items-center justify-between mb-6">
                 <span className="font-bold text-colorTextBody">Total</span>
                 <span className="text-xl font-bold text-colorTextBody">
-                  ৳ {loading ? "0" : subtotal.toLocaleString("en-BD")}
+                  ৳
+                  {loading
+                    ? "0"
+                    : subtotal >= 3000
+                      ? subtotal
+                      : `${subtotal + deliveryCharge}`}
                 </span>
               </div>
 
