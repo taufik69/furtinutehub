@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function HeroContentClient({ title }: { title: string }) {
@@ -28,14 +29,15 @@ export default function HeroContentClient({ title }: { title: string }) {
           FOR A BETTER WAY TO WORK
         </p>
 
-        <button
+        <Link
+          href="/allcollection"
           className={`bg-transparent border-2 border-colorHeroText text-colorHeroText px-10 py-3 text-sm tracking-wider hover:bg-colorHeroText hover:text-colorBtnPrimaryText transition-all duration-300 ${
             isLoaded ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
           }`}
           style={{ transitionDelay: "700ms" }}
         >
           Shop Now
-        </button>
+        </Link>
       </div>
     </div>
   );

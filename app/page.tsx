@@ -1,4 +1,5 @@
 import dynamic from "next/dynamic";
+
 const BestSelling = dynamic(() => import("@/components/Homepage/BestSelling"));
 const ProductGridSection = dynamic(
   () => import("@/components/Homepage/CategoryProductTabs"),

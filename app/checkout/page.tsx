@@ -57,7 +57,7 @@ export default function CheckoutPage() {
         color: it.color || null,
         size: it.size || null,
       })),
-      deliveryCharge: subtotal > 3000 ? 0 : deliveryCharge,
+      deliveryCharge: subtotal >= 3000 ? 0 : setDeliveryCharge((prev) => prev),
     };
 
     try {
