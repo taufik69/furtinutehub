@@ -274,7 +274,7 @@ export default function CartPage() {
                   <span className="text-colorTextBody/60">Delivery</span>
                   <span className="text-green-600 font-medium">
                     {" "}
-                    {subtotal >= 3000 ? "Free" : `৳${deliveryCharge}`}
+                    {`৳${deliveryCharge}`}
                   </span>
                 </div>
               </div>
@@ -285,12 +285,7 @@ export default function CartPage() {
               <div className="flex items-center justify-between mb-6">
                 <span className="font-bold text-colorTextBody">Total</span>
                 <span className="text-xl font-bold text-colorTextBody">
-                  ৳
-                  {loading
-                    ? "0"
-                    : subtotal >= 3000
-                      ? subtotal
-                      : `${subtotal + deliveryCharge}`}
+                  ৳{loading ? "0" : `${subtotal + deliveryCharge}`}
                 </span>
               </div>
 

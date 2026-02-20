@@ -57,7 +57,7 @@ export default function CheckoutPage() {
         color: it.color || null,
         size: it.size || null,
       })),
-      deliveryCharge: subtotal >= 3000 ? 0 : setDeliveryCharge((prev) => prev),
+      deliveryCharge: setDeliveryCharge((prev) => prev),
     };
 
     try {
@@ -408,7 +408,7 @@ export default function CheckoutPage() {
                   <span className="text-colorTextBody/60">Delivery</span>
 
                   <span className="font-medium text-green-600">
-                    {subtotal >= 3000 ? "Free" : `৳${deliveryCharge}`}
+                    {`৳${deliveryCharge}`}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
@@ -424,7 +424,7 @@ export default function CheckoutPage() {
               <div className="flex items-center justify-between ">
                 <span className="font-bold text-colorTextBody mb-6">Total</span>
                 <span className="text-xl font-bold text-colorTextBody">
-                  ৳ {subtotal >= 3000 ? subtotal : subtotal + deliveryCharge}
+                  ৳ {subtotal + deliveryCharge}
                 </span>
               </div>
 
