@@ -12,22 +12,22 @@ import {
 export default function Footer() {
   const footerLinks = {
     company: [
-      { name: "About Us", href: "/about" },
+      { name: "About Us", href: "/studio" },
       { name: "Contact", href: "/contact" },
-      { name: "Careers", href: "/careers" },
-      { name: "Store Locator", href: "/stores" },
+      { name: "Careers", href: "#" },
+      { name: "Store Locator", href: "/developer-taufik-islam-01747237518" },
     ],
     support: [
-      { name: "FAQs", href: "/faqs" },
-      { name: "Shipping & Delivery", href: "/shipping" },
-      { name: "Return Policy", href: "/returns" },
-      { name: "Track Order", href: "/track-order" },
+      { name: "FAQs", href: "#" },
+      { name: "Shipping & Delivery", href: "/allcollection" },
+      { name: "Return Policy", href: "#" },
+      { name: "Track Order", href: "#" },
     ],
     legal: [
-      { name: "Terms of Service", href: "/terms" },
-      { name: "Privacy Policy", href: "/privacy" },
-      { name: "Cookie Policy", href: "/cookies" },
-      { name: "Warranty", href: "/warranty" },
+      { name: "Terms of Service", href: "#" },
+      { name: "Privacy Policy", href: "#" },
+      { name: "Cookie Policy", href: "#" },
+      { name: "Warranty", href: "#" },
     ],
   };
 
@@ -45,7 +45,7 @@ export default function Footer() {
           {/* Brand Section */}
           <div className="lg:col-span-2">
             <Link href="/" className="inline-block mb-4">
-              <h2 className="text-2xl font-bold">Regal Furniture</h2>
+              <h2 className="text-2xl font-bold">BD Online Shop </h2>
             </Link>
             <p className="text-colorFooterText/80 mb-6 leading-relaxed">
               Premium furniture that transforms your space into a haven of
@@ -59,8 +59,10 @@ export default function Footer() {
                 <div>
                   <p className="font-semibold">Call Us</p>
                   <p className="text-sm text-colorFooterText/80">
-                    +880 1894-846098
+                    +8801741659798
                   </p>
+                  <p className="font-semibold">Bkash Nogod Personal</p>
+                  <p className="text-sm text-colorFooterText/80">01771249206</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -68,7 +70,7 @@ export default function Footer() {
                 <div>
                   <p className="font-semibold">Email</p>
                   <p className="text-sm text-colorFooterText/80">
-                    info@regalfurniture.com
+                    bdonlineshop268@gmail.com
                   </p>
                 </div>
               </div>
@@ -77,7 +79,7 @@ export default function Footer() {
                 <div>
                   <p className="font-semibold">Address</p>
                   <p className="text-sm text-colorFooterText/80">
-                    Dhaka, Bangladesh
+                    Jossore, Benapol, Zero Point, Bangladesh
                   </p>
                 </div>
               </div>
@@ -162,7 +164,7 @@ export default function Footer() {
 
             {/* Copyright */}
             <p className="text-sm text-colorFooterText/70 text-center">
-              Copyright © {new Date().getFullYear()} Regal Furniture. All rights
+              Copyright © {new Date().getFullYear()} BD Online Shop. All rights
               reserved.
             </p>
           </div>

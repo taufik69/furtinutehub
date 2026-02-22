@@ -23,7 +23,7 @@ export default function Navbar() {
             <div className="shrink-0">
               <Link href="/" className="bg-[#FF6B4A] px-4 py-2 rounded block">
                 <span className="text-white font-bold text-2xl italic">
-                  Frid
+                  BD Online Shop
                 </span>
               </Link>
             </div>

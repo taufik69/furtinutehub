@@ -65,11 +65,21 @@ export default function ProductDetailsClient({
   };
 
   const handleWhatsApp = () => {
-    const message = `Hi! I'm interested in purchasing:\n*${product?.name}*\nColor: ${selectedColor}${
-      selectedSize ? `\nSize: ${selectedSize}` : ""
-    }\nQuantity: ${quantity}\n\nPlease let me know the availability.`;
+    const phoneNumber = "8801741659798";
+
+    const message = `Hi! I'm interested in purchasing:
+*${product?.name}*
+Color: ${selectedColor}${selectedSize ? `\nSize: ${selectedSize}` : ""}
+Quantity: ${quantity}
+
+Please let me know the availability.`;
+
     const encodedMessage = encodeURIComponent(message);
-    window.open(`https://wa.me/?text=${encodedMessage}`, "_blank");
+
+    window.open(
+      `https://wa.me/${phoneNumber}?text=${encodedMessage}`,
+      "_blank",
+    );
   };
 
   const incrementQuantity = () => setQuantity((prev) => prev + 1);
@@ -459,10 +469,10 @@ export default function ProductDetailsClient({
                   </svg>
                   <div>
                     <h4 className="font-semibold text-colorTextBody text-sm mb-1">
-                      Free Delivery
+                      Fastest Delivery
                     </h4>
                     <p className="text-xs text-colorTextBody/60">
-                      On orders over ৳5000
+                      On Over Whole Bangladesh
                     </p>
                   </div>
                 </div>
