@@ -9,7 +9,7 @@ export default function ServicesSection() {
       title: "Expert Consultation",
       description:
         "Get personalized advice from our kitchen design specialists",
-      details: "Call: 01894846098 or 01844664888",
+      details: "Call: +8801741659798 or 01771249206",
       highlight: "Free Appointment",
     },
     {
@@ -18,15 +18,14 @@ export default function ServicesSection() {
       title: "Professional Assembly",
       description:
         "Hassle-free installation and fitting service at your doorstep",
-      details: "Customer Care: 08007777777",
+      details: "Customer Care: 01771249206",
       highlight: "Complimentary Service",
     },
     {
       id: 3,
       icon: CreditCard,
       title: "Flexible Payment",
-      description:
-        "Easy EMI options with zero interest on purchases above 5000 Tk",
+      description: "Easy EMI options with zero interest on Tk",
       details: "Up to 6 months installment",
       highlight: "0% Interest",
     },
