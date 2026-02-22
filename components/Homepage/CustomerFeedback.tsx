@@ -24,7 +24,7 @@ export default function CustomerFeedback() {
   const prevRef = useRef<HTMLButtonElement>(null);
   const nextRef = useRef<HTMLButtonElement>(null);
 
-  // ✅ mobile এ navigation off
+  // mobile এ navigation off
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
