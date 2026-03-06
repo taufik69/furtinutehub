@@ -21,9 +21,12 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <div className="shrink-0">
-              <Link href="/" className="bg-[#FF6B4A] px-4 py-2 rounded block">
+              <Link
+                href="/"
+                className="bg-[#FF6B4A] hover:bg-[#ff6b4ad2] px-4 py-2 rounded block"
+              >
                 <span className="text-white font-bold text-2xl italic">
-                  BD Online Shop
+                  Shop
                 </span>
               </Link>
             </div>
