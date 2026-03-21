@@ -30,3 +30,32 @@ export const getCategories = async () => {
         return [];
     }
 };
+
+export const getSubCategories = async (categoryId?: string) => {
+    try {
+        const query = categoryId ? `?category=${encodeURIComponent(categoryId)}` : "";
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/subcategory/get-subcategory${query}`,
+            { cache: "no-store" },
+        );
+        const data = await response.json();
+        return data?.data || [];
+    } catch (error) {
+        console.error("Error fetching subcategories:", error);
+        return [];
+    }
+};
+
+export const getBrands = async () => {
+    try {
+        const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/brand/get-brand`,
+            { cache: "no-store" },
+        );
+        const data = await response.json();
+        return data?.data || [];
+    } catch (error) {
+        console.error("Error fetching brands:", error);
+        return [];
+    }
+};

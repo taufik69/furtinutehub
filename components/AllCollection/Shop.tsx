@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { colors } from "@/data/data";
 import CollectionProductCard from "@/components/commonComponents/Productcardupdated";
+import { getBrands, getSubCategories } from "@/app/api/api";
 
 const DEFAULT_MAX = 100000;
 
@@ -14,6 +15,8 @@ export default function ShopPage() {
   // API data
   const [products, setProducts] = useState<any[]>([]);
   const [categories, setCategories] = useState<any[]>([]);
+  const [subcategories, setSubcategories] = useState<any[]>([]);
+  const [brands, setBrands] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
   // State for filters - synced with URL
@@ -25,6 +28,12 @@ export default function ShopPage() {
   );
   const [selectedColor, setSelectedColor] = useState(
     searchParams.get("color") || "",
+  );
+  const [selectedSubcategory, setSelectedSubcategory] = useState(
+    searchParams.get("subcategory") || "",
+  );
+  const [selectedBrand, setSelectedBrand] = useState(
+    searchParams.get("brandRef") || "",
   );
   const [priceRange, setPriceRange] = useState({
     min: Number(searchParams.get("minPrice")) || 0,
@@ -50,6 +59,41 @@ export default function ShopPage() {
     const saved = localStorage.getItem("searchHistory");
     if (saved) setSearchHistory(JSON.parse(saved));
   }, []);
+
+  useEffect(() => {
+    const fetchBrands = async () => {
+      try {
+        const data = await getBrands();
+        setBrands(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Error fetching brands:", error);
+        setBrands([]);
+      }
+    };
+    fetchBrands();
+  }, []);
+
+  useEffect(() => {
+    const fetchSubcategories = async () => {
+      try {
+        const data = await getSubCategories(selectedCategory || undefined);
+        setSubcategories(Array.isArray(data) ? data : []);
+      } catch (error) {
+        console.error("Error fetching subcategories:", error);
+        setSubcategories([]);
+      }
+    };
+    fetchSubcategories();
+  }, [selectedCategory]);
+
+  useEffect(() => {
+    if (
+      selectedSubcategory &&
+      !subcategories.some((sc) => (sc.id || sc._id) === selectedSubcategory)
+    ) {
+      setSelectedSubcategory("");
+    }
+  }, [subcategories, selectedSubcategory]);
 
   // Fetch categories on mount
   useEffect(() => {
@@ -78,6 +122,8 @@ export default function ShopPage() {
       // Add all query params
       if (searchQuery) params.set("name", searchQuery);
       if (selectedCategory) params.set("category", selectedCategory);
+      if (selectedSubcategory) params.set("subcategory", selectedSubcategory);
+      if (selectedBrand) params.set("brandRef", selectedBrand);
       if (selectedColor) params.set("color", selectedColor);
       if (priceRange.min > 0) params.set("minPrice", priceRange.min.toString());
       if (priceRange.max < DEFAULT_MAX)
@@ -133,6 +179,8 @@ export default function ShopPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     selectedCategory,
+    selectedSubcategory,
+    selectedBrand,
     selectedColor,
     priceRange.min,
     priceRange.max,
@@ -147,6 +195,8 @@ export default function ShopPage() {
 
     if (searchQuery) params.set("name", searchQuery);
     if (selectedCategory) params.set("category", selectedCategory);
+    if (selectedSubcategory) params.set("subcategory", selectedSubcategory);
+    if (selectedBrand) params.set("brandRef", selectedBrand);
     if (selectedColor) params.set("color", selectedColor);
     if (priceRange.min > 0) params.set("minPrice", priceRange.min.toString());
     if (priceRange.max < DEFAULT_MAX)
@@ -163,6 +213,8 @@ export default function ShopPage() {
   }, [
     searchQuery,
     selectedCategory,
+    selectedSubcategory,
+    selectedBrand,
     selectedColor,
     priceRange.min,
     priceRange.max,
@@ -187,6 +239,8 @@ export default function ShopPage() {
   const clearAllFilters = () => {
     setSearchQuery("");
     setSelectedCategory("");
+    setSelectedSubcategory("");
+    setSelectedBrand("");
     setSelectedColor("");
     setPriceRange({ min: 0, max: DEFAULT_MAX });
     setSelectedAvailability("");
@@ -197,6 +251,8 @@ export default function ShopPage() {
   // Count active filters
   const activeFiltersCount =
     (selectedCategory ? 1 : 0) +
+    (selectedSubcategory ? 1 : 0) +
+    (selectedBrand ? 1 : 0) +
     (selectedColor ? 1 : 0) +
     (selectedAvailability ? 1 : 0) +
     (priceRange.min > 0 || priceRange.max < DEFAULT_MAX ? 1 : 0) +
@@ -413,6 +469,78 @@ export default function ShopPage() {
                       className="text-xs text-colorLink hover:underline ml-7"
                     >
                       Clear category
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Subcategory Filter */}
+              <div className="mb-8">
+                <h3 className="font-semibold text-colorTextBody mb-4">
+                  Subcategories
+                </h3>
+                <div className="space-y-2 max-h-64 overflow-y-auto">
+                  {subcategories.map((subcategory) => {
+                    const subcategoryId = subcategory.id || subcategory._id;
+                    return (
+                      <label
+                        key={subcategoryId}
+                        className="flex items-center gap-3 cursor-pointer group"
+                      >
+                        <input
+                          type="radio"
+                          name="subcategory"
+                          checked={selectedSubcategory === subcategoryId}
+                          onChange={() => setSelectedSubcategory(subcategoryId)}
+                          className="w-4 h-4 border-colorBorder text-colorBtnPrimary focus:ring-colorBtnPrimary/20"
+                        />
+                        <span className="text-sm text-colorTextBody group-hover:text-colorLink">
+                          {subcategory.name}
+                        </span>
+                      </label>
+                    );
+                  })}
+                  {selectedSubcategory && (
+                    <button
+                      onClick={() => setSelectedSubcategory("")}
+                      className="text-xs text-colorLink hover:underline ml-7"
+                    >
+                      Clear subcategory
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Brand Filter */}
+              <div className="mb-8">
+                <h3 className="font-semibold text-colorTextBody mb-4">Brands</h3>
+                <div className="space-y-2 max-h-64 overflow-y-auto">
+                  {brands.map((brand) => {
+                    const brandId = brand.id || brand._id;
+                    return (
+                      <label
+                        key={brandId}
+                        className="flex items-center gap-3 cursor-pointer group"
+                      >
+                        <input
+                          type="radio"
+                          name="brand"
+                          checked={selectedBrand === brandId}
+                          onChange={() => setSelectedBrand(brandId)}
+                          className="w-4 h-4 border-colorBorder text-colorBtnPrimary focus:ring-colorBtnPrimary/20"
+                        />
+                        <span className="text-sm text-colorTextBody group-hover:text-colorLink">
+                          {brand.name}
+                        </span>
+                      </label>
+                    );
+                  })}
+                  {selectedBrand && (
+                    <button
+                      onClick={() => setSelectedBrand("")}
+                      className="text-xs text-colorLink hover:underline ml-7"
+                    >
+                      Clear brand
                     </button>
                   )}
                 </div>

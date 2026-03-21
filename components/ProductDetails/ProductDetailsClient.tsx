@@ -3,7 +3,7 @@
 import Link from "next/link";
 import CollectionProductCard from "@/components/commonComponents/Productcardupdated";
 import { ProductImageGallery } from "@/components/ProductDetails/Productclientfinal";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { addToCart } from "@/lib/cart.db";
 import { Bounce, toast } from "react-toastify";
 
@@ -15,45 +15,121 @@ export default function ProductDetailsClient({
   relatedProducts: any[];
 }) {
   const [quantity, setQuantity] = useState(1);
-  const [selectedColor, setSelectedColor] = useState(product?.color?.[0] || "");
-  const [selectedSize, setSelectedSize] = useState(product?.size?.[0] || "");
-  const [wishlist, setWishlist] = useState(false);
+  const [selectedColor, setSelectedColor] = useState("");
+  const [selectedSize, setSelectedSize] = useState("");
   const [isAdding, setIsAdding] = useState(false);
 
-  // Extract images from API structure
+  // ── Variant setup ─────────────────────────────────────────────────────────
+  const variants = Array.isArray(product?.variants) ? product.variants : [];
+  const hasVariants = Boolean(product?.hasVariants) && variants.length > 0;
+
+  // All unique colors
+  const availableColors: string[] = useMemo(() => {
+    if (hasVariants) {
+      return Array.from(
+        new Set(
+          variants
+            .filter((v: any) => v?.isActive !== false)
+            .map((v: any) => String(v?.color || "").trim())
+            .filter(Boolean),
+        ),
+      );
+    }
+    return Array.isArray(product?.color) ? product.color : [];
+  }, [hasVariants, product?.color, variants]);
+
+  // Sizes filtered by selected color (variants) or all sizes (no variant)
+  const availableSizes: string[] = useMemo(() => {
+    if (hasVariants) {
+      const scoped = selectedColor
+        ? variants.filter(
+            (v: any) => v?.color === selectedColor && v?.isActive !== false,
+          )
+        : variants.filter((v: any) => v?.isActive !== false);
+      return Array.from(
+        new Set(
+          scoped.map((v: any) => String(v?.size || "").trim()).filter(Boolean),
+        ),
+      );
+    }
+    return Array.isArray(product?.size) ? product.size : [];
+  }, [hasVariants, product?.size, selectedColor, variants]);
+
+  // Active variant based on color + size selection
+  const selectedVariant = useMemo(() => {
+    if (!hasVariants || !selectedColor) return null;
+    return (
+      variants.find(
+        (v: any) =>
+          v?.color === selectedColor &&
+          (selectedSize ? v?.size === selectedSize : true) &&
+          v?.isActive !== false,
+      ) || null
+    );
+  }, [hasVariants, variants, selectedColor, selectedSize]);
+
+  // Set default color on mount
+  useEffect(() => {
+    if (availableColors.length > 0) {
+      setSelectedColor(availableColors[0]);
+    }
+  }, [availableColors]);
+
+  // When color changes, reset size to first available for that color
+  useEffect(() => {
+    if (availableSizes.length > 0) {
+      if (!availableSizes.includes(selectedSize)) {
+        setSelectedSize(availableSizes[0]);
+      }
+    } else {
+      setSelectedSize("");
+    }
+  }, [availableSizes]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── Derived display values ─────────────────────────────────────────────────
   const images =
     product?.image?.map((img: any) => img.optimized_url || img.url) || [];
-  const price = product?.finalPrice || product?.price || 0;
-  const originalPrice = product?.price || 0;
-  const discountValue = product?.discountValue || 0;
-  const inStock = product?.inStock ?? true;
 
+  const price =
+    selectedVariant?.finalPrice ?? product?.finalPrice ?? product?.price ?? 0;
+  const originalPrice = selectedVariant?.price ?? product?.price ?? 0;
+  const discountValue =
+    selectedVariant?.discountValue ?? product?.discountValue ?? 0;
+  const discountType =
+    selectedVariant?.discountType ?? product?.discountType ?? null;
+  const inStock = selectedVariant
+    ? selectedVariant.inStock
+    : (product?.inStock ?? true);
+  const sku = selectedVariant?.sku || product?.sku || "";
+  const stock = selectedVariant?.stock ?? product?.stock;
+
+  const brandName =
+    product?.brandRef?.name ||
+    (typeof product?.brand === "string" ? product.brand : "") ||
+    "";
+  const subcategoryName = product?.subcategory?.name || "";
+
+  // ── Handlers ──────────────────────────────────────────────────────────────
   const handleAddToCart = async () => {
     if (!inStock) return;
-
     try {
       setIsAdding(true);
-
       await addToCart({
         key: `${product?.slug}:${selectedColor || "default"}:${selectedSize || "default"}`,
-        productId: product?._id,
+        productId: product?._id || product?.id,
         name: product?.name,
         slug: product?.slug,
         image:
           product?.image?.[0]?.optimized_url || product?.image?.[0]?.url || "",
-        price: Number(product?.finalPrice ?? product?.price ?? 0),
+        price: Number(price),
         qty: quantity,
-        color: selectedColor || null,
-        size: selectedSize || null,
+        color: selectedColor || "",
+        size: selectedSize || "",
       });
-      toast.success(`Added ${quantity} ${product?.name} to cart!`, {
-        position: "top-right",
-        autoClose: 5000,
+      toast.success(`Added ${quantity} × ${product?.name} to cart!`, {
+        position: "top-center",
+        autoClose: 4000,
         hideProgressBar: true,
-        closeOnClick: false,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
         theme: "light",
         transition: Bounce,
       });
@@ -65,25 +141,12 @@ export default function ProductDetailsClient({
   };
 
   const handleWhatsApp = () => {
-    const phoneNumber = "8801741659798";
-
-    const message = `Hi! I'm interested in purchasing:
-*${product?.name}*
-Color: ${selectedColor}${selectedSize ? `\nSize: ${selectedSize}` : ""}
-Quantity: ${quantity}
-
-Please let me know the availability.`;
-
-    const encodedMessage = encodeURIComponent(message);
-
+    const message = `Hi! I'm interested in purchasing:\n*${product?.name}*\nColor: ${selectedColor}${selectedSize ? `\nSize: ${selectedSize}` : ""}\nQuantity: ${quantity}\n\nPlease confirm availability.`;
     window.open(
-      `https://wa.me/${phoneNumber}?text=${encodedMessage}`,
+      `https://wa.me/8801741659798?text=${encodeURIComponent(message)}`,
       "_blank",
     );
   };
-
-  const incrementQuantity = () => setQuantity((prev) => prev + 1);
-  const decrementQuantity = () => setQuantity((prev) => Math.max(1, prev - 1));
 
   return (
     <div className="min-h-screen bg-colorBody">
@@ -101,183 +164,104 @@ Please let me know the availability.`;
           <span className="text-colorTextBody">{product?.name}</span>
         </div>
 
-        {/* Product Details Section */}
+        {/* Main Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 mb-16">
-          {/* Client Component for Interactive Parts */}
+          {/* Left — Image Gallery */}
           <ProductImageGallery
             images={images}
             discount={discountValue}
-            discountType={product?.discountType}
+            discountType={discountType}
             productName={product?.name || "Product"}
           />
 
-          {/* Product Info - Client Side now (same design) */}
-          <div className="space-y-6">
-            {/* Title & Category */}
+          {/* Right — Product Info */}
+          <div className="space-y-5">
+            {/* Title */}
             <div>
               {product?.category?.name && (
-                <p className="text-sm text-colorTextBody/60 mb-2">
+                <p className="text-xs text-colorTextBody/50 uppercase tracking-wide mb-1">
                   {product.category.name}
+                  {subcategoryName && ` › ${subcategoryName}`}
                 </p>
               )}
-              <h1 className="text-3xl lg:text-4xl font-bold text-colorTextBody mb-3">
+              <h1 className="text-2xl lg:text-3xl font-bold text-colorTextBody leading-tight">
                 {product?.name}
               </h1>
-
-              {/* Brand */}
-              {product?.brand && (
-                <p className="text-sm text-colorTextBody/60">
+              {brandName && (
+                <p className="text-sm text-colorTextBody/60 mt-1">
                   Brand:{" "}
                   <span className="font-medium text-colorTextBody">
-                    {product.brand}
+                    {brandName}
                   </span>
                 </p>
               )}
-
-              {/* Rating */}
-              {product?.rating > 0 && (
-                <div className="flex items-center gap-2 mt-3">
-                  <div className="flex items-center">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <svg
-                        key={i}
-                        className={`w-5 h-5 ${
-                          i < Math.floor(product.rating)
-                            ? "text-yellow-500"
-                            : "text-gray-300"
-                        }`}
-                        fill="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                      </svg>
-                    ))}
-                  </div>
-                  <span className="text-sm text-colorTextBody/60">
-                    ({product.rating} stars • {product.totalReviews || 0}{" "}
-                    reviews)
-                  </span>
-                </div>
-              )}
             </div>
+
+            {/* Rating */}
+            {product?.rating > 0 && (
+              <div className="flex items-center gap-2">
+                <div className="flex">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <svg
+                      key={i}
+                      className={`w-4 h-4 ${i < Math.floor(product.rating) ? "text-yellow-400" : "text-gray-200"}`}
+                      fill="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                    </svg>
+                  ))}
+                </div>
+                <span className="text-xs text-colorTextBody/50">
+                  {product.rating} • {product.totalReviews || 0} reviews
+                </span>
+              </div>
+            )}
 
             {/* Price */}
             <div className="flex items-baseline gap-3">
               <span className="text-3xl font-bold text-colorTextBody">
                 ৳ {price.toLocaleString("en-BD")}
               </span>
-              {discountValue > 0 && (
+              {discountValue > 0 && originalPrice !== price && (
                 <>
-                  <span className="text-xl text-colorTextBody/40 line-through">
+                  <span className="text-lg text-colorTextBody/40 line-through">
                     ৳ {originalPrice.toLocaleString("en-BD")}
                   </span>
-                  <span className="text-sm font-semibold text-green-600 bg-green-50 px-2 py-1 rounded">
-                    Save {discountValue}%
+                  <span className="text-xs font-semibold text-green-700 bg-green-100 px-2 py-0.5 rounded-full">
+                    {discountType === "percentage"
+                      ? `${discountValue}% off`
+                      : `Save ৳${discountValue}`}
                   </span>
                 </>
               )}
             </div>
 
-            {/* Short Description */}
+            {/* Short description */}
             {product?.shortDescription && (
-              <div className="  rounded-lg">
-                <p className="text-colorTextBody font-medium">
-                  {product.shortDescription}
-                </p>
-              </div>
+              <p className="text-sm text-colorTextBody/80 leading-relaxed">
+                {product.shortDescription}
+              </p>
             )}
 
-            {/* Description */}
-            {product?.description && (
-              <div className="border-t border-colorBorder pt-6">
-                <h3 className="font-semibold text-colorTextBody mb-2">
-                  Description
-                </h3>
-                <p className="text-colorTextBody/80 leading-relaxed">
-                  {product.description}
-                </p>
-              </div>
-            )}
-
-            {/* Product Details */}
-            <div className="border-t border-colorBorder pt-6 space-y-3">
-              <h3 className="font-semibold text-colorTextBody mb-4">
-                Product Details
-              </h3>
-
-              {product?.sku && (
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-colorTextBody/60">SKU:</span>
-                  <span className="text-colorTextBody font-medium">
-                    {product.sku}
-                  </span>
-                </div>
-              )}
-
-              {product?.category?.name && (
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-colorTextBody/60">Category:</span>
-                  <span className="text-colorTextBody font-medium">
-                    {product.category.name}
-                  </span>
-                </div>
-              )}
-
-              {product?.stock !== undefined && (
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-colorTextBody/60">Stock:</span>
-                  <span className="text-colorTextBody font-medium">
-                    {product.stock} units available
-                  </span>
-                </div>
-              )}
-
-              {/* tag  */}
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-colorTextBody/60">Status:</span>
-                <div className="flex items-center gap-2">
-                  {product?.isNew && (
-                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded">
-                      New
-                    </span>
-                  )}
-                  {product?.isSale && (
-                    <span className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded">
-                      Sale
-                    </span>
-                  )}
-                  {product?.isLimited && (
-                    <span className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded">
-                      Limited
-                    </span>
-                  )}
-                  {product?.isHot && (
-                    <span className="text-xs bg-pink-100 text-pink-700 px-2 py-1 rounded">
-                      Hot
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Color Selection */}
-            {product?.color?.length > 0 && (
-              <div>
-                <h3 className="font-semibold text-colorTextBody mb-3 text-sm">
+            {/* ── COLOR SELECTION ─────────────────────────────────────────── */}
+            {availableColors.length > 0 && (
+              <div className="border-t border-colorBorder pt-4">
+                <p className="text-sm font-semibold text-colorTextBody mb-2">
                   Color:{" "}
-                  <span className="font-normal text-colorTextBody/70">
+                  <span className="font-normal text-colorTextBody/60">
                     {selectedColor}
                   </span>
-                </h3>
+                </p>
                 <div className="flex flex-wrap gap-2">
-                  {product.color.map((col: string) => (
+                  {availableColors.map((col) => (
                     <button
                       key={col}
                       onClick={() => setSelectedColor(col)}
-                      className={`px-3 py-1.5 rounded-lg border-2 transition-all text-sm ${
+                      className={`px-3 py-1.5 rounded-lg border-2 text-sm transition-all ${
                         selectedColor === col
                           ? "border-colorBtnPrimary bg-colorBtnPrimary/10 text-colorBtnPrimary font-medium"
-                          : "border-colorBorder hover:border-colorBtnPrimary/50 text-colorTextBody"
+                          : "border-colorBorder hover:border-colorBtnPrimary/40 text-colorTextBody"
                       }`}
                     >
                       {col}
@@ -287,24 +271,24 @@ Please let me know the availability.`;
               </div>
             )}
 
-            {/* Size Selection */}
-            {product?.size?.length > 0 && (
-              <div>
-                <h3 className="font-semibold text-colorTextBody mb-3 text-sm">
+            {/* ── SIZE SELECTION ───────────────────────────────────────────── */}
+            {availableSizes.length > 0 && (
+              <div className="border-t border-colorBorder pt-4">
+                <p className="text-sm font-semibold text-colorTextBody mb-2">
                   Size:{" "}
-                  <span className="font-normal text-colorTextBody/70">
+                  <span className="font-normal text-colorTextBody/60">
                     {selectedSize}
                   </span>
-                </h3>
+                </p>
                 <div className="flex flex-wrap gap-2">
-                  {product.size.map((size: string) => (
+                  {availableSizes.map((size) => (
                     <button
                       key={size}
                       onClick={() => setSelectedSize(size)}
-                      className={`px-3 py-1.5 rounded-lg border-2 transition-all text-sm min-w-17.5 ${
+                      className={`px-3 py-1.5 rounded-lg border-2 text-sm transition-all min-w-[52px] text-center ${
                         selectedSize === size
                           ? "border-colorBtnPrimary bg-colorBtnPrimary/10 text-colorBtnPrimary font-medium"
-                          : "border-colorBorder hover:border-colorBtnPrimary/50 text-colorTextBody"
+                          : "border-colorBorder hover:border-colorBtnPrimary/40 text-colorTextBody"
                       }`}
                     >
                       {size}
@@ -314,14 +298,28 @@ Please let me know the availability.`;
               </div>
             )}
 
-            {/* Quantity */}
-            <div className="flex justify-between items-center">
-              <div className="flex items-center border border-colorBorder rounded-lg w-fit">
+            {/* ── VARIANT PRICE NOTE ───────────────────────────────────────── */}
+            {hasVariants && selectedVariant && (
+              <div className="text-xs text-colorTextBody/50 bg-colorBodyDim px-3 py-2 rounded-lg">
+                SKU:{" "}
+                <span className="font-medium text-colorTextBody">
+                  {selectedVariant.sku}
+                </span>
+                {" · "}
+                Stock:{" "}
+                <span className="font-medium text-colorTextBody">
+                  {selectedVariant.stock} units
+                </span>
+              </div>
+            )}
+
+            {/* ── QUANTITY + STOCK ─────────────────────────────────────────── */}
+            <div className="border-t border-colorBorder pt-4 flex items-center justify-between gap-4">
+              <div className="flex items-center border border-colorBorder rounded-lg">
                 <button
-                  onClick={decrementQuantity}
+                  onClick={() => setQuantity((p) => Math.max(1, p - 1))}
                   disabled={!inStock}
-                  className="px-4 py-2.5 hover:bg-colorBodyDim transition-colors disabled:opacity-50 rounded-l-lg"
-                  aria-label="Decrease"
+                  className="px-4 py-2.5 hover:bg-colorBodyDim disabled:opacity-40 transition-colors rounded-l-lg"
                 >
                   <svg
                     className="w-4 h-4"
@@ -337,16 +335,13 @@ Please let me know the availability.`;
                     />
                   </svg>
                 </button>
-
-                <span className="px-6 py-2.5 font-semibold text-colorTextBody min-w-15 text-center border-x border-colorBorder">
+                <span className="px-6 py-2.5 font-semibold text-colorTextBody min-w-[56px] text-center border-x border-colorBorder">
                   {quantity}
                 </span>
-
                 <button
-                  onClick={incrementQuantity}
+                  onClick={() => setQuantity((p) => p + 1)}
                   disabled={!inStock}
-                  className="px-4 py-2.5 hover:bg-colorBodyDim transition-colors disabled:opacity-50 rounded-r-lg"
-                  aria-label="Increase"
+                  className="px-4 py-2.5 hover:bg-colorBodyDim disabled:opacity-40 transition-colors rounded-r-lg"
                 >
                   <svg
                     className="w-4 h-4"
@@ -363,38 +358,33 @@ Please let me know the availability.`;
                   </svg>
                 </button>
               </div>
-              <div className="flex items-center justify-between mb-3 gap-x-4">
-                <h3 className="font-semibold text-colorTextBody text-sm">
-                  Quantity
-                </h3>
-                <span
-                  className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                    inStock
-                      ? "text-green-700 bg-green-100"
-                      : "text-red-700 bg-red-100"
-                  }`}
-                >
-                  {inStock ? "In Stock" : "Out of Stock"}
-                </span>
-              </div>
+
+              <span
+                className={`text-xs font-semibold px-3 py-1.5 rounded-full ${
+                  inStock
+                    ? "text-green-700 bg-green-100"
+                    : "text-red-700 bg-red-100"
+                }`}
+              >
+                {inStock ? "In Stock" : "Out of Stock"}
+              </span>
             </div>
 
-            {/* Action Buttons */}
-            <div className="flex justify-between gap-x-5">
-              {/* Add to Cart */}
+            {/* ── ACTION BUTTONS ───────────────────────────────────────────── */}
+            <div className="flex gap-3">
               <button
                 onClick={handleAddToCart}
                 disabled={!inStock || isAdding}
-                className={`w-full py-4 px-6 rounded-lg font-semibold transition-all flex items-center justify-center gap-2 ${
+                className={`flex-1 py-3.5 px-5 rounded-lg font-semibold text-sm transition-all flex items-center justify-center gap-2 ${
                   inStock
                     ? "bg-colorBtnPrimary text-colorBtnPrimaryText hover:bg-colorBtnPrimary/90 active:scale-95"
-                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                } ${isAdding ? "opacity-80" : ""}`}
+                    : "bg-gray-200 text-gray-400 cursor-not-allowed"
+                } ${isAdding ? "opacity-75" : ""}`}
               >
                 {isAdding ? (
                   <>
                     <svg
-                      className="animate-spin h-5 w-5"
+                      className="animate-spin h-4 w-4"
                       fill="none"
                       viewBox="0 0 24 24"
                     >
@@ -417,7 +407,7 @@ Please let me know the availability.`;
                 ) : (
                   <>
                     <svg
-                      className="w-5 h-5"
+                      className="w-4 h-4"
                       fill="none"
                       stroke="currentColor"
                       viewBox="0 0 24 24"
@@ -434,13 +424,12 @@ Please let me know the availability.`;
                 )}
               </button>
 
-              {/* WhatsApp Button */}
               <button
                 onClick={handleWhatsApp}
-                className="w-full py-4 px-6 rounded-lg font-semibold transition-all flex items-center justify-center gap-2  text-white hover:bg-[#1ebe57] active:scale-95  bg-[#1ebe57]"
+                className="flex-1 py-3.5 px-5 rounded-lg font-semibold text-sm bg-[#25D366] hover:bg-[#1ebe57] active:scale-95 text-white transition-all flex items-center justify-center gap-2"
               >
                 <svg
-                  className="w-5 h-5"
+                  className="w-4 h-4"
                   viewBox="0 0 24 24"
                   fill="currentColor"
                 >
@@ -450,55 +439,120 @@ Please let me know the availability.`;
               </button>
             </div>
 
-            {/* Delivery Info */}
-            <div className="border-t border-colorBorder pt-6">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="flex items-start gap-3 p-4 bg-colorBodyDim rounded-lg">
-                  <svg
-                    className="w-6 h-6 text-colorBtnPrimary shrink-0 mt-1"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
-                    />
-                  </svg>
-                  <div>
-                    <h4 className="font-semibold text-colorTextBody text-sm mb-1">
-                      Fastest Delivery
-                    </h4>
-                    <p className="text-xs text-colorTextBody/60">
-                      On Over Whole Bangladesh
-                    </p>
-                  </div>
-                </div>
+            {/* Description */}
+            {product?.description && (
+              <div className="border-t border-colorBorder pt-4">
+                <h3 className="text-sm font-semibold text-colorTextBody mb-2">
+                  Description
+                </h3>
+                <p className="text-sm text-colorTextBody/75 leading-relaxed">
+                  {product.description}
+                </p>
+              </div>
+            )}
 
-                <div className="flex items-start gap-3 p-4 bg-colorBodyDim rounded-lg">
-                  <svg
-                    className="w-6 h-6 text-colorBtnPrimary shrink-0 mt-1"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+            {/* Product Details Table */}
+            <div className="border-t border-colorBorder pt-4 space-y-2">
+              <h3 className="text-sm font-semibold text-colorTextBody mb-3">
+                Product Details
+              </h3>
+
+              {[
+                { label: "SKU", value: sku },
+                { label: "Category", value: product?.category?.name },
+                { label: "Subcategory", value: subcategoryName },
+                {
+                  label: "Stock",
+                  value: stock !== undefined ? `${stock} units` : null,
+                },
+              ]
+                .filter((r) => r.value)
+                .map((row) => (
+                  <div
+                    key={row.label}
+                    className="flex items-center justify-between text-sm"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-                    />
-                  </svg>
-                  <div>
-                    <h4 className="font-semibold text-colorTextBody text-sm mb-1">
-                      Secure Payment
-                    </h4>
-                    <p className="text-xs text-colorTextBody/60">
-                      100% secure transaction
-                    </p>
+                    <span className="text-colorTextBody/50">{row.label}</span>
+                    <span className="text-colorTextBody font-medium">
+                      {row.value}
+                    </span>
                   </div>
+                ))}
+
+              {/* Badges */}
+              <div className="flex items-center justify-between text-sm pt-1">
+                <span className="text-colorTextBody/50">Tags</span>
+                <div className="flex gap-1.5">
+                  {product?.isNew && (
+                    <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
+                      New
+                    </span>
+                  )}
+                  {product?.isSale && (
+                    <span className="text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
+                      Sale
+                    </span>
+                  )}
+                  {product?.isLimited && (
+                    <span className="text-xs bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full">
+                      Limited
+                    </span>
+                  )}
+                  {product?.isHot && (
+                    <span className="text-xs bg-pink-100 text-pink-700 px-2 py-0.5 rounded-full">
+                      Hot
+                    </span>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Delivery Info */}
+            <div className="border-t border-colorBorder pt-4 grid grid-cols-2 gap-3">
+              <div className="flex items-start gap-2.5 p-3 bg-colorBodyDim rounded-lg">
+                <svg
+                  className="w-5 h-5 text-colorBtnPrimary shrink-0 mt-0.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"
+                  />
+                </svg>
+                <div>
+                  <p className="text-xs font-semibold text-colorTextBody">
+                    Fastest Delivery
+                  </p>
+                  <p className="text-xs text-colorTextBody/50">
+                    Whole Bangladesh
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-start gap-2.5 p-3 bg-colorBodyDim rounded-lg">
+                <svg
+                  className="w-5 h-5 text-colorBtnPrimary shrink-0 mt-0.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+                  />
+                </svg>
+                <div>
+                  <p className="text-xs font-semibold text-colorTextBody">
+                    Secure Payment
+                  </p>
+                  <p className="text-xs text-colorTextBody/50">
+                    100% safe transaction
+                  </p>
                 </div>
               </div>
             </div>
@@ -509,11 +563,9 @@ Please let me know the availability.`;
         {relatedProducts.length > 0 && (
           <div>
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-2xl font-bold text-colorTextBody">
+              <h2 className="text-xl font-bold text-colorTextBody">
                 Related Products
               </h2>
-
-              {/* ✅ if your shop uses category id param now */}
               <Link
                 href={`/allcollection?category=${product?.category?._id}`}
                 className="text-colorLink hover:underline text-sm"
@@ -521,13 +573,9 @@ Please let me know the availability.`;
                 View All
               </Link>
             </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {relatedProducts.map((relatedProduct: any) => (
-                <CollectionProductCard
-                  key={relatedProduct._id || relatedProduct.slug}
-                  productData={relatedProduct}
-                />
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {relatedProducts.map((p: any) => (
+                <CollectionProductCard key={p._id || p.slug} productData={p} />
               ))}
             </div>
           </div>
