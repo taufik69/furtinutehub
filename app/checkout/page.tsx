@@ -16,7 +16,7 @@ export default function CheckoutPage() {
   const [status, setStatus] = useState<OrderStatus>("idle");
   const [orderId, setOrderId] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
-  const [deliveryCharge, setDeliveryCharge] = useState(350);
+  const [deliveryCharge, setDeliveryCharge] = useState(0);
 
   useEffect(() => {
     getCart()
@@ -53,6 +53,7 @@ export default function CheckoutPage() {
       paymentMethod: "cod",
       items: items.map((it) => ({
         productId: it.productId,
+        variantId: it.variantId || null,
         qty: it.qty,
         color: it.color || null,
         size: it.size || null,

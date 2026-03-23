@@ -114,9 +114,14 @@ export default function ProductDetailsClient({
     if (!inStock) return;
     try {
       setIsAdding(true);
+      const selectedVariantId = selectedVariant?._id || selectedVariant?.id;
+      const resolvedProductId = String(product?._id || product?.id || "");
       await addToCart({
-        key: `${product?.slug}:${selectedColor || "default"}:${selectedSize || "default"}`,
-        productId: product?._id || product?.id,
+        key: selectedVariantId
+          ? `variant:${selectedVariantId}`
+          : `product:${product?.slug || product?._id || product?.id}`,
+        productId: resolvedProductId,
+        variantId: selectedVariantId ? String(selectedVariantId) : undefined,
         name: product?.name,
         slug: product?.slug,
         image:

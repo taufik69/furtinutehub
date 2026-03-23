@@ -1,6 +1,7 @@
 export type CartItem = {
     key: string;
     productId: string;
+    variantId?: string;
     name: string;
     slug: string;
     image: string;
@@ -84,6 +85,7 @@ export async function addToCart(payload: CartItem): Promise<CartItem> {
                 : {
                     key: payload.key,
                     productId: payload.productId,
+                    variantId: payload.variantId,
                     name: payload.name,
                     slug: payload.slug,
                     image: payload.image,
