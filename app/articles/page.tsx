@@ -1,8 +1,12 @@
-"use client";
-
 import HeroBanner from "@/components/Homepage/Herobanner";
 import Image from "next/image";
 import Link from "next/link";
+import { getBanners } from "@/app/api/api";
+
+// ── Image paths (local static assets) ────────────────────────────────────────
+const ARTICLE_IMG_1 = "/images/article-furniture-1.png";
+const ARTICLE_IMG_2 = "/images/article-furniture-2.png";
+const ARTICLE_IMG_3 = "/images/article-furniture-3.png";
 
 const featuredArticles = [
   {
@@ -11,7 +15,7 @@ const featuredArticles = [
     title: "How to Determine the Ideal Standing Desk Height – Step by Step",
     excerpt:
       "If you use a standing workstation, you've already taken a step toward better health. Extended periods of sitting have been linked to health issues such as obesity and metabolic syndrome, a group of disorders characterized by high blood pressure, high...",
-    image: "https://images.unsplash.com/photo-1593642532400-2682810df593?w=800",
+    image: ARTICLE_IMG_1,
     slug: "ideal-standing-desk-height",
     layout: "image-left",
   },
@@ -21,7 +25,7 @@ const featuredArticles = [
     title: "How the Right Office Chair Can Boost Employee Productivity",
     excerpt:
       "In general, the office worker spends a great deal of time sitting behind a computer desk.",
-    image: "https://images.unsplash.com/photo-1581291518857-4e27b48ff24e?w=800",
+    image: ARTICLE_IMG_2,
     slug: "office-chair-productivity",
     layout: "image-right",
   },
@@ -31,7 +35,7 @@ const featuredArticles = [
     title: "How ergonomic chairs increase productivity at work",
     excerpt:
       "Choosing the right office furniture for your needs can be a difficult task. With a wide range of options,",
-    image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=800",
+    image: ARTICLE_IMG_3,
     slug: "ergonomic-chairs-productivity",
     layout: "image-left",
   },
@@ -43,7 +47,7 @@ const bottomArticles = [
     title: "Exceptional Furniture For The Taskmasters",
     description:
       "We founded GRID, to make it easy for teams of all sizes to create an office you love. We will direct so our collection costs half as much as premium furniture of comparable quality.",
-    image: "https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=600",
+    image: ARTICLE_IMG_1,
     slug: "exceptional-furniture",
   },
   {
@@ -51,7 +55,7 @@ const bottomArticles = [
     title: "Ergonomic Design",
     description:
       "Enjoy stylish and ergonomic work setting for every budget, from the home office to the open office. Durable, adjustable and built to inspire, make your office feel like home with customizable desks & chairs from GRID Furniture.",
-    image: "https://images.unsplash.com/photo-1607619056574-7b8d3ee536b2?w=600",
+    image: ARTICLE_IMG_2,
     slug: "ergonomic-design",
   },
   {
@@ -59,17 +63,19 @@ const bottomArticles = [
     title: "Wherever you are, work your best.",
     description:
       "Our breathable, mesh material provides air optimal air flow to avoid sweating and sticking, keep air circulation to every cavity, and the mesh office chair resists distortion and transformation.",
-    image: "https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=600",
+    image: ARTICLE_IMG_3,
     slug: "work-your-best",
   },
 ];
 
-export default function ArticlesPage() {
+export default async function ArticlesPage() {
+  const banners = await getBanners();
+
   return (
     <div className="bg-colorBody min-h-screen">
       {/* Page Title */}
       <div className="mb-30">
-        <HeroBanner title="ARTICLES" />
+        <HeroBanner title="ARTICLES" images={banners} />
       </div>
 
       {/* Featured Articles - Alternating Layout */}

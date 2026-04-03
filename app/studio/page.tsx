@@ -4,11 +4,17 @@ import OurProcess from "@/components/studio/Ourprocess";
 import TransformingCorporateSpaces from "@/components/studio/Transformingcorporatespaces";
 import WhatWeDo from "@/components/studio/Whatwedo";
 import React from "react";
+import { getBanners } from "@/app/api/api";
 
-const FurnitureStudio = () => {
+// ── Image paths (local static assets) ────────────────────────────────────────
+const ABOUT_DUMMY_IMG = "/images/article-furniture-1.png";
+
+const FurnitureStudio = async () => {
+  const banners = await getBanners();
+
   return (
     <div>
-      <HeroBanner title="About Us" />
+      <HeroBanner title="About Us" images={banners} />
       <WhatWeDo />
       <OurProcess />
       <FromVisionToSpace />

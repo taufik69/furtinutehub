@@ -1,4 +1,35 @@
 // app/api/api.ts
+
+// ── Banner (cached with ISR) ────────────────────────────────────────────────
+export const getBanners = async (): Promise<string[]> => {
+    try {
+        const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/banner/get-banner`,
+            { next: { revalidate: 60 } },
+        );
+
+        if (!res.ok) return [];
+
+        const data = await res.json();
+        const banners = data?.data || [];
+        console.log("banners", banners)
+
+        // Only return image URLs of active banners with uploaded images
+        const imageUrls: string[] = banners
+            .filter(
+                (b: any) =>
+                    b.isActive && b.image?.status === "uploaded" && b.image?.url,
+            )
+            .map((b: any) => b.image.url);
+
+        return imageUrls;
+    } catch (error) {
+        console.error("Error fetching banners:", error);
+        return [];
+    }
+};
+
+// ── Products ────────────────────────────────────────────────────────────────
 export const getBestSelling = async (query: string) => {
     try {
         const res = await fetch(
