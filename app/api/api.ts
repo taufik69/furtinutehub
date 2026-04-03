@@ -34,7 +34,7 @@ export const getBestSelling = async (query: string) => {
     try {
         const res = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/product/get-products?${query}=true`,
-            { cache: "no-store" },
+            { next: { revalidate: 3600 } },
         );
 
         const data = await res.json();
@@ -52,7 +52,7 @@ export const getCategories = async () => {
     try {
         const response = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/categories/get-category`,
-            { cache: "no-store" },
+            { next: { revalidate: 3600 } },
         );
         const data = await response.json();
         return data?.data || [];
@@ -67,7 +67,7 @@ export const getSubCategories = async (categoryId?: string) => {
         const query = categoryId ? `?category=${encodeURIComponent(categoryId)}` : "";
         const response = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/subcategory/get-subcategory${query}`,
-            { cache: "no-store" },
+            { next: { revalidate: 3600 } },
         );
         const data = await response.json();
         return data?.data || [];
@@ -81,7 +81,7 @@ export const getBrands = async () => {
     try {
         const response = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/brand/get-brand`,
-            { cache: "no-store" },
+            { next: { revalidate: 3600 } },
         );
         const data = await response.json();
         return data?.data || [];

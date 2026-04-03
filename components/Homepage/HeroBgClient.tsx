@@ -64,7 +64,7 @@ export default function HeroBgSliderClient({
           priority
           sizes="100vw"
           className="object-cover"
-          quality={100}
+          quality={80}
         />
       </div>
 
@@ -86,7 +86,7 @@ export default function HeroBgSliderClient({
               fill
               sizes="100vw"
               className="object-cover"
-              quality={100}
+              quality={80}
             />
           </div>
         </div>

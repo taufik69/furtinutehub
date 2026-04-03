@@ -1,24 +1,45 @@
 import HeroBanner from "@/components/Homepage/Herobanner";
 import { getBanners } from "@/app/api/api";
 import dynamic from "next/dynamic";
-const BestSelling = dynamic(() => import("@/components/Homepage/BestSelling"));
+const BestSelling = dynamic(() => import("@/components/Homepage/BestSelling"), {
+  loading: () => <SectionSkeleton />,
+});
 const ProductGridSection = dynamic(
   () => import("@/components/Homepage/CategoryProductTabs"),
+  { loading: () => <SectionSkeleton /> },
 );
 
 const CustomerFeedback = dynamic(
   () => import("@/components/Homepage/CustomerFeedback"),
+  { loading: () => <SectionSkeleton /> },
 );
 
-const NewArrival = dynamic(() => import("@/components/Homepage/NewArrival"));
+const NewArrival = dynamic(() => import("@/components/Homepage/NewArrival"), {
+  loading: () => <SectionSkeleton />,
+});
 
 const ServicesSection = dynamic(
   () => import("@/components/Homepage/ServicesSection"),
+  { loading: () => <SectionSkeleton /> },
 );
 
 const ShopByCategory = dynamic(
   () => import("@/components/Homepage/Shopbycategory"),
+  { loading: () => <SectionSkeleton /> },
 );
+
+function SectionSkeleton() {
+  return (
+    <div className="w-full py-16 animate-pulse px-4 sm:px-6 lg:px-8">
+      <div className="h-8 w-48 bg-gray-200 rounded mb-6 mx-auto"></div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {[1, 2, 3, 4].map((i) => (
+          <div key={i} className="h-64 bg-gray-100 rounded-xl"></div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default async function HomePage() {
   const banners = await getBanners();
