@@ -12,7 +12,7 @@ export default function CheckoutPage() {
   const [fullName, setFullName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
-  const [note, setNote] = useState("");
+  const [deliveryArea, setDeliveryArea] = useState("inside");
   const [status, setStatus] = useState<OrderStatus>("idle");
   const [orderId, setOrderId] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
@@ -49,8 +49,9 @@ export default function CheckoutPage() {
         phone: `${phone.trim()}`,
         address: address.trim(),
       },
-      note: note.trim() || null,
+      note: null,
       paymentMethod: "cod",
+      deliveryArea: deliveryArea === "inside" ? "Inside Dhaka" : "Outside Dhaka",
       items: items.map((it) => ({
         productId: it.productId,
         variantId: it.variantId || null,
@@ -58,7 +59,7 @@ export default function CheckoutPage() {
         color: it.color || null,
         size: it.size || null,
       })),
-      deliveryCharge: setDeliveryCharge((prev) => prev),
+      deliveryCharge: deliveryCharge,
     };
 
     try {
@@ -228,27 +229,27 @@ export default function CheckoutPage() {
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-colorTextBody mb-2">
-                    Full Name <span className="text-red-500">*</span>
+                    পুরো নাম <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
-                    placeholder="Enter your full name"
+                    placeholder="আপনার পুরো নাম লিখুন"
                     className="w-full px-4 py-3 rounded-lg border border-colorBorder bg-colorInputBg text-colorInputText placeholder:text-colorTextBody/30 focus:outline-none focus:ring-1 focus:ring-colorBtnPrimary/40"
                   />
                 </div>
 
                 <div>
                   <label className="block text-sm font-medium text-colorTextBody mb-2">
-                    Phone Number <span className="text-red-500">*</span>
+                    ফোন নাম্বার <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
                     <input
                       type="tel"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
-                      placeholder="1XXXXXXXXX"
+                      placeholder="01XXXXXXXXX"
                       className="w-full   px-4 py-3 rounded-lg border border-colorBorder bg-colorInputBg text-colorInputText placeholder:text-colorTextBody/30 focus:outline-none focus:ring-1 focus:ring-colorBtnPrimary/40"
                     />
                   </div>
@@ -256,89 +257,34 @@ export default function CheckoutPage() {
 
                 <div>
                   <label className="block text-sm font-medium text-colorTextBody mb-2">
-                    Delivery Address <span className="text-red-500">*</span>
+                    ডেলিভারি এরিয়া <span className="text-red-500">*</span>
+                  </label>
+                  <select
+                    value={deliveryArea}
+                    onChange={(e) => setDeliveryArea(e.target.value)}
+                    className="w-full px-4 py-3 rounded-lg border border-colorBorder bg-colorInputBg text-colorInputText focus:outline-none focus:ring-1 focus:ring-colorBtnPrimary/40"
+                  >
+                    <option value="inside">ঢাকার সিটির ভিতরে (Inside Dhaka City)</option>
+                    <option value="outside">ঢাকা সিটির বাইরে (Outside Dhaka City)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-colorTextBody mb-2">
+                    ডেলিভারি ঠিকানা <span className="text-red-500">*</span>
                   </label>
                   <textarea
                     rows={4}
                     value={address}
                     onChange={(e) => setAddress(e.target.value)}
-                    placeholder="House no, road no, area, district, division..."
+                    placeholder="বাড়ি নং, রাস্তা নং, এলাকা, জেলা, বিভাগ..."
                     className="w-full px-4 py-3 rounded-lg border border-colorBorder bg-colorInputBg text-colorInputText placeholder:text-colorTextBody/30 focus:outline-none focus:ring-1 focus:ring-colorBtnPrimary/40 resize-none"
                   />
                 </div>
               </div>
             </div>
 
-            {/* Section 2: Payment - COD only */}
-            <div className="bg-colorBodyDim/40 border border-colorBorder rounded-xl p-6">
-              <h2 className="text-base font-bold text-colorTextBody mb-6 flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-colorBtnPrimary text-colorBtnPrimaryText text-xs flex items-center justify-center font-bold">
-                  2
-                </span>
-                Payment Method
-              </h2>
 
-              <div className="flex items-center gap-4 p-4 rounded-lg border-2 border-colorBtnPrimary bg-colorBtnPrimary/5">
-                <div className="w-10 h-10 rounded-lg bg-colorBodyDim flex items-center justify-center shrink-0">
-                  <svg
-                    className="w-5 h-5 text-colorTextBody/60"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"
-                    />
-                  </svg>
-                </div>
-                <div className="flex-1">
-                  <p className="font-semibold text-colorTextBody text-sm">
-                    Cash on Delivery
-                  </p>
-                  <p className="text-xs text-colorTextBody/50">
-                    Pay when you receive the product
-                  </p>
-                </div>
-                <div className="w-5 h-5 rounded-full bg-colorBtnPrimary flex items-center justify-center shrink-0">
-                  <svg
-                    className="w-3 h-3 text-colorBtnPrimaryText"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={3}
-                      d="M5 13l4 4L19 7"
-                    />
-                  </svg>
-                </div>
-              </div>
-            </div>
-
-            {/* Section 3: Note */}
-            <div className="bg-colorBodyDim/40 border border-colorBorder rounded-xl p-6">
-              <h2 className="text-base font-bold text-colorTextBody mb-6 flex items-center gap-2">
-                <span className="w-6 h-6 rounded-full bg-colorBtnPrimary text-colorBtnPrimaryText text-xs flex items-center justify-center font-bold">
-                  3
-                </span>
-                Order Note
-                <span className="text-colorTextBody/40 text-xs font-normal ml-1">
-                  (optional)
-                </span>
-              </h2>
-              <textarea
-                rows={3}
-                value={note}
-                onChange={(e) => setNote(e.target.value)}
-                placeholder="Any special instructions for your order..."
-                className="w-full px-4 py-3 rounded-lg border border-colorBorder bg-colorInputBg text-colorInputText placeholder:text-colorTextBody/30 focus:outline-none focus:ring-1 focus:ring-colorBtnPrimary/40 resize-none"
-              />
-            </div>
           </div>
 
           {/* ── Right: Summary ────────────────────────────── */}
@@ -412,12 +358,7 @@ export default function CheckoutPage() {
                     {`৳${deliveryCharge}`}
                   </span>
                 </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-colorTextBody/60">Payment</span>
-                  <span className="font-medium text-colorTextBody">
-                    Cash on Delivery
-                  </span>
-                </div>
+
               </div>
 
               <div className="border-t border-colorBorder py-4" />
