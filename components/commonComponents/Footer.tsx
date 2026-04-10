@@ -45,7 +45,7 @@ export default function Footer() {
           {/* Brand Section */}
           <div className="lg:col-span-2">
             <Link href="/" className="inline-block mb-4">
-              <h2 className="text-2xl font-bold">BD Online Shop </h2>
+              <h2 className="text-2xl font-bold">TotalBazar </h2>
             </Link>
             <p className="text-colorFooterText/80 mb-6 leading-relaxed">
               Premium furniture that transforms your space into a haven of
@@ -164,7 +164,7 @@ export default function Footer() {
 
             {/* Copyright */}
             <p className="text-sm text-colorFooterText/70 text-center">
-              Copyright © {new Date().getFullYear()} BD Online Shop. All rights
+              Copyright © {new Date().getFullYear()} TotalBazar. All rights
               reserved.
             </p>
           </div>
