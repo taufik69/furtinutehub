@@ -48,7 +48,7 @@ export default function Footer() {
               <h2 className="text-2xl font-bold">TotalBazar </h2>
             </Link>
             <p className="text-colorFooterText/80 mb-6 leading-relaxed">
-              Premium furniture that transforms your space into a haven of
+              Premium Products that transforms your space into a haven of
               comfort and style.
             </p>
 
@@ -59,10 +59,10 @@ export default function Footer() {
                 <div>
                   <p className="font-semibold">Call Us</p>
                   <p className="text-sm text-colorFooterText/80">
-                    +8801741659798
+                    01616-785862
                   </p>
                   <p className="font-semibold">Bkash Nogod Personal</p>
-                  <p className="text-sm text-colorFooterText/80">01771249206</p>
+                  <p className="text-sm text-colorFooterText/80">01616-785862</p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -70,7 +70,7 @@ export default function Footer() {
                 <div>
                   <p className="font-semibold">Email</p>
                   <p className="text-sm text-colorFooterText/80">
-                    bdonlineshop268@gmail.com
+                   totalbazaarsbd@gmail.com
                   </p>
                 </div>
               </div>
@@ -79,7 +79,7 @@ export default function Footer() {
                 <div>
                   <p className="font-semibold">Address</p>
                   <p className="text-sm text-colorFooterText/80">
-                    Jossore, Benapol, Zero Point, Bangladesh
+                   Kadamtali, Keraniganj, Dhaka
                   </p>
                 </div>
               </div>
