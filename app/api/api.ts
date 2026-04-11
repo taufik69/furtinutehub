@@ -1,7 +1,11 @@
 // app/api/api.ts
 
-// ── Banner (cached with ISR) ────────────────────────────────────────────────
-export const getBanners = async (): Promise<string[]> => {
+export interface Banner {
+    title: string;
+    imageUrl: string;
+}
+
+export const getBanners = async (): Promise<Banner[]> => {
     try {
         const res = await fetch(
             `${process.env.NEXT_PUBLIC_API_URL}/banner/get-banner`,
@@ -12,17 +16,17 @@ export const getBanners = async (): Promise<string[]> => {
 
         const data = await res.json();
         const banners = data?.data || [];
-        console.log("banners", banners)
 
-        // Only return image URLs of active banners with uploaded images
-        const imageUrls: string[] = banners
+        // Return banner objects with title and image URL
+        return banners
             .filter(
                 (b: any) =>
                     b.isActive && b.image?.status === "uploaded" && b.image?.url,
             )
-            .map((b: any) => b.image.url);
-
-        return imageUrls;
+            .map((b: any) => ({
+                title: b.title || "Modern Furniture",
+                imageUrl: b.image.url
+            }));
     } catch (error) {
         console.error("Error fetching banners:", error);
         return [];

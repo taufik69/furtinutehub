@@ -6,11 +6,13 @@ import { useEffect, useMemo, useState } from "react";
 type Props = {
   images?: string[];
   intervalMs?: number; // total time per slide
+  externalIndex?: number; // Sync with parent
 };
 
 export default function HeroBgSliderClient({
   images = ["/images/cover.webp", "/images/cover2.webp", "/images/cover3.webp"],
   intervalMs = 9000,
+  externalIndex,
 }: Props) {
   const list = useMemo(() => images.filter(Boolean), [images]);
 
@@ -18,24 +20,40 @@ export default function HeroBgSliderClient({
   const [showNext, setShowNext] = useState(false);
   const [run, setRun] = useState(false);
 
-  const next = list.length ? (active + 1) % list.length : 0;
+  // Use external index if provided, otherwise internal
+  const activeIdx = externalIndex !== undefined ? externalIndex : active;
+  const next = list.length ? (activeIdx + 1) % list.length : 0;
 
   useEffect(() => {
     if (list.length <= 1) return;
-    //  start zoom animation after mount
+    
+    // If we're using external index, we just handle animations based on changes to that index
+    if (externalIndex !== undefined) {
+      setActive(externalIndex);
+      // Restart zoom for the new slide
+      setRun(false);
+      const raf = requestAnimationFrame(() => setRun(true));
+      
+      const fadeDuration = 3600;
+      const fadeStart = Math.max(0, intervalMs - fadeDuration);
+      
+      setShowNext(false);
+      const t1 = window.setTimeout(() => setShowNext(true), fadeStart);
+      
+      return () => {
+        cancelAnimationFrame(raf);
+        clearTimeout(t1);
+      };
+    }
+
+    // Original internal interval logic for backward compatibility or standalone use
     const raf = requestAnimationFrame(() => setRun(true));
-
-    //  slower crossfade
-    const fadeDuration = 3600; // 2.6s fade
+    const fadeDuration = 3600;
     const fadeStart = Math.max(0, intervalMs - fadeDuration);
-
     const t1 = window.setTimeout(() => setShowNext(true), fadeStart);
-
     const t2 = window.setTimeout(() => {
       setActive(next);
       setShowNext(false);
-
-      // restart zoom for the next slide
       setRun(false);
       requestAnimationFrame(() => setRun(true));
     }, intervalMs);
@@ -45,7 +63,7 @@ export default function HeroBgSliderClient({
       clearTimeout(t1);
       clearTimeout(t2);
     };
-  }, [active, intervalMs, list.length, next]);
+  }, [activeIdx, externalIndex, intervalMs, list.length, next]);
 
   if (!list.length) return null;
 
