@@ -15,20 +15,20 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: {
-    default: "TotalBazar.bd | Premium Furniture & Home Decor Store in Bangladesh",
+    default:
+      "TotalBazar.bd | Premium Products & Home Decor Store in Bangladesh",
     template: "%s | TotalBazar.bd",
   },
   description:
-    "Discover high-quality, modern furniture and home decor at TotalBazar.bd. Shop premium sofas, beds, ergonomic chairs, and office solutions in Bangladesh with home delivery.",
+    "Discover high-quality, modern products and home decor at TotalBazar.bd. Shop premium items, beds, ergonomic chairs, and office solutions in Bangladesh with home delivery.",
   keywords: [
-    "furniture",
+    "products",
     "home decor",
-    "modern furniture",
     "sofa",
     "bed",
     "office furniture",
     "TotalBazar.bd",
-    "Bangladesh furniture",
+    "Bangladesh ",
     "online shopping BD",
     "living room furniture",
   ],
