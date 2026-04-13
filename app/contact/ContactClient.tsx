@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import HeroBanner from "@/components/Homepage/Herobanner";
+import { Banner } from "@/app/api/api";
 
 // ── Image paths (local static assets) ────────────────────────────────────────
 const CONTACT_OFFICE_IMG = "/images/contact-office.png";
@@ -24,7 +25,7 @@ const contactInfo = [
       </svg>
     ),
     title: "Phone",
-    details: ["+880 1234-567890", "+880 1234-567891"],
+    details: ["01616-785862"],
   },
   {
     icon: (
@@ -43,7 +44,7 @@ const contactInfo = [
       </svg>
     ),
     title: "Email",
-    details: ["info@gridfurniture.com", "support@gridfurniture.com"],
+    details: ["totalbazaarsbd@gmail.com"],
   },
   {
     icon: (
@@ -68,7 +69,7 @@ const contactInfo = [
       </svg>
     ),
     title: "Address",
-    details: ["123 Furniture Street", "Dhaka 1212, Bangladesh"],
+    details: ["Kadamtali, Keraniganj, Dhaka"],
   },
   {
     icon: (
@@ -130,7 +131,7 @@ const socialLinks = [
   },
 ];
 
-export default function ContactClient({ images }: { images?: string[] }) {
+export default function ContactClient({ banners }: { banners?: Banner[] }) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -211,7 +212,7 @@ export default function ContactClient({ images }: { images?: string[] }) {
     <div className="bg-colorBody min-h-screen">
       {/* Hero Section */}
       <section className="pb-16 md:pb-16  ">
-        <HeroBanner title="Contact Us" images={images} />
+        <HeroBanner title="Contact Us" banners={banners} />
       </section>
 
       {/* Contact Info Cards */}

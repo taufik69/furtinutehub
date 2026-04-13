@@ -14,7 +14,7 @@ const FurnitureStudio = async () => {
 
   return (
     <div>
-      <HeroBanner title="About Us" images={banners} />
+      <HeroBanner title="About Us" banners={banners} />
       <WhatWeDo />
       <OurProcess />
       <FromVisionToSpace />

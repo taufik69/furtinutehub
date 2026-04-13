@@ -3,7 +3,6 @@
 import CategoryCard from "../commonComponents/CategoryCard";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
-import { useRef } from "react";
 
 import "swiper/css";
 import "swiper/css/navigation";
@@ -15,38 +14,10 @@ export default function ShopByCategorySwipper({
 }: {
   categories: CategoryType[];
 }) {
-  const prevRef = useRef<HTMLButtonElement>(null);
-  const nextRef = useRef<HTMLButtonElement>(null);
-
   return (
-    <section className="relative pt-12 sm:pt-16  bg-colorBody">
-      {/* Custom Navigation Buttons */}
-      <button
-        ref={prevRef}
-        className="hidden md:blcok absolute left-[-4%] top-1/2 -translate-y-1/2 z-10 bg-colorBtnPrimaryDim text-colorBtnPrimaryText w-10 h-10 sm:flex items-center justify-center rounded-full hover:bg-colorBtnPrimaryDim/90 hover:scale-110 transition-all duration-300  cursor-pointer"
-      >
-        ←
-      </button>
-
-      <button
-        ref={nextRef}
-        className="hidden md:blcok absolute right-[-5%] top-1/2 -translate-y-1/2 z-10 bg-colorBtnPrimaryDim text-colorBtnPrimaryText w-10 h-10 sm:flex items-center justify-center rounded-full hover:bg-colorBtnPrimaryDim/90 hover:scale-110 transition-all duration-300  cursor-pointer"
-      >
-        →
-      </button>
-
+    <section className="relative pt-12 sm:pt-16 bg-colorBody">
       <Swiper
         modules={[Navigation, Pagination, Autoplay]}
-        onBeforeInit={(swiper) => {
-          if (typeof swiper.params.navigation !== "boolean") {
-            swiper.params.navigation!.prevEl = prevRef.current;
-            swiper.params.navigation!.nextEl = nextRef.current;
-          }
-        }}
-        navigation={{
-          prevEl: prevRef.current,
-          nextEl: nextRef.current,
-        }}
         pagination={{
           clickable: true,
           el: ".custom-pagination",

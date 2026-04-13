@@ -1,11 +1,8 @@
 "use client";
-
 import { Banner } from "@/app/api/api";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import Image from "next/image";
-import { useRef } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 
 // Import Swiper styles
 import "swiper/css";
@@ -26,9 +23,6 @@ interface HeroBannerProps {
 }
 
 export default function HeroBanner({ banners, title, images }: HeroBannerProps) {
-  const prevRef = useRef<HTMLButtonElement>(null);
-  const nextRef = useRef<HTMLButtonElement>(null);
-
   // Handle different prop combinations
   let bannerList: Banner[] = [];
   
@@ -44,21 +38,6 @@ export default function HeroBanner({ banners, title, images }: HeroBannerProps) 
     <div className="relative w-full h-[50vh] md:h-[85vh] group">
       <Swiper
         modules={[Navigation, Pagination, Autoplay]}
-        onSwiper={(swiper) => {
-          // Force navigation refresh
-          if (typeof swiper.params.navigation !== "boolean") {
-            const nav = swiper.params.navigation!;
-            nav.prevEl = prevRef.current;
-            nav.nextEl = nextRef.current;
-            swiper.navigation.destroy();
-            swiper.navigation.init();
-            swiper.navigation.update();
-          }
-        }}
-        navigation={{
-          prevEl: prevRef.current,
-          nextEl: nextRef.current,
-        }}
         pagination={{ 
           clickable: true,
           bulletActiveClass: "swiper-pagination-bullet-active !bg-white",
@@ -79,29 +58,13 @@ export default function HeroBanner({ banners, title, images }: HeroBannerProps) 
                 fill
                 priority={index === 0}
                 className="object-cover"
-                quality={100}
+                quality={80}
                 sizes="100vw"
               />
             </div>
           </SwiperSlide>
         ))}
       </Swiper>
-
-      {/* Custom Navigation Buttons */}
-      <button
-        ref={prevRef}
-        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 flex items-center justify-center rounded-full bg-black/20 hover:bg-black/40 text-white backdrop-blur-sm transition-all duration-300 opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0"
-        aria-label="Previous slide"
-      >
-        <ChevronLeft className="w-6 h-6" />
-      </button>
-      <button
-        ref={nextRef}
-        className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 flex items-center justify-center rounded-full bg-black/20 hover:bg-black/40 text-white backdrop-blur-sm transition-all duration-300 opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0"
-        aria-label="Next slide"
-      >
-        <ChevronRight className="w-6 h-6" />
-      </button>
 
       {/* Custom Global Styles for Pagination */}
       <style dangerouslySetInnerHTML={{ __html: `

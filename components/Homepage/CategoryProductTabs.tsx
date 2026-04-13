@@ -1,8 +1,8 @@
 "use client";
-
-import { useEffect, useMemo, useState } from "react";
+import { getCategories } from "@/app/api/api";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 
 const DEFAULT_LIMIT = 12;
 
@@ -41,13 +41,7 @@ export default function ProductGridSection() {
     const loadCategories = async () => {
       setLoadingCats(true);
       try {
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_API_URL}/categories/get-category`,
-          { cache: "no-store" },
-        );
-        const json = await res.json();
-        const list = json?.data || [];
-
+        const list = await getCategories();
         setCategories(list);
 
         //  default active first category
@@ -74,7 +68,6 @@ export default function ProductGridSection() {
       try {
         const res = await fetch(
           `${process.env.NEXT_PUBLIC_API_URL}/product/get-products?category=${activeCategoryId}`,
-          { cache: "no-store" },
         );
         const json = await res.json();
         const list = json?.data || [];
@@ -184,6 +177,8 @@ export default function ProductGridSection() {
                       alt={product.name}
                       fill
                       className="object-cover group-hover:scale-105 transition-transform duration-500"
+                      quality={80}
+                      sizes="(max-width: 640px) 50vw, (max-width: 1024px) 40vw, 33vw"
                     />
 
                     {/* Gradient Overlay */}

@@ -75,7 +75,7 @@ export default async function ArticlesPage() {
     <div className="bg-colorBody min-h-screen">
       {/* Page Title */}
       <div className="mb-30">
-        <HeroBanner title="ARTICLES" images={banners} />
+        <HeroBanner title="ARTICLES" banners={banners} />
       </div>
 
       {/* Featured Articles - Alternating Layout */}

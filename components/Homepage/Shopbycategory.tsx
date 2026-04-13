@@ -1,17 +1,5 @@
 import ShopByCategorySwipper from "../commonComponents/Categoryswipper";
-
-async function getCategories() {
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_API_URL}/categories/get-category`,
-    { cache: "no-store" },
-  );
-
-  if (!res.ok) throw new Error("Failed to fetch categories");
-
-  const data = await res.json();
-
-  return data.data;
-}
+import { getCategories } from "@/app/api/api";
 
 export default async function ShopByCategory() {
   const categories = await getCategories();

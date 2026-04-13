@@ -10,7 +10,7 @@ import ToastContainerClient from "@/components/AllCollection/Toast/ToastContaine
 const poppins = Poppins({
   variable: "--font-poppins",
   subsets: ["latin"],
-  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
+  weight: ["400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
@@ -84,7 +84,17 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <Script id="google-tag-manager" strategy="afterInteractive">
+      <head>
+        <link rel="preconnect" href="https://res.cloudinary.com" />
+        <link rel="dns-prefetch" href="https://res.cloudinary.com" />
+        {process.env.NEXT_PUBLIC_API_URL && (
+          <>
+            <link rel="preconnect" href={new URL(process.env.NEXT_PUBLIC_API_URL).origin} />
+            <link rel="dns-prefetch" href={new URL(process.env.NEXT_PUBLIC_API_URL).origin} />
+          </>
+        )}
+      </head>
+      <Script id="google-tag-manager" strategy="lazyOnload">
         {`
           (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
           new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],

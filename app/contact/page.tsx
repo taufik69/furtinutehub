@@ -4,5 +4,5 @@ import { getBanners } from "@/app/api/api";
 export default async function ContactPage() {
   const banners = await getBanners();
 
-  return <ContactClient images={banners} />;
+  return <ContactClient banners={banners} />;
 }
