@@ -6,6 +6,7 @@ import Script from "next/script";
 import Footer from "@/components/commonComponents/Footer";
 import Navbar from "@/components/Homepage/Navbar";
 import ToastContainerClient from "@/components/AllCollection/Toast/ToastContainer";
+import FloatingContact from "@/components/commonComponents/FloatingContact";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -114,6 +115,7 @@ export default function RootLayout({
         </noscript>
         <Navbar />
         <ToastContainerClient />
+        <FloatingContact />
         {children}
         <Footer />
       </body>

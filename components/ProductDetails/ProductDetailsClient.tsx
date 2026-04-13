@@ -9,9 +9,9 @@ import { addToCart } from "@/lib/cart.db";
 import { Bounce, toast } from "react-toastify";
 
 // ── CONFIG — reads from .env.local ────────────────────────────────────────────
-const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "8801700000000";
+const WHATSAPP_NUMBER = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "8801616785862";
 const MESSENGER_USERNAME = process.env.NEXT_PUBLIC_MESSENGER_USERNAME ?? "pervejfashion";
-const CALL_NUMBER = process.env.NEXT_PUBLIC_CALL_NUMBER ?? "+8801700000000";
+const CALL_NUMBER = process.env.NEXT_PUBLIC_CALL_NUMBER ?? "01616-785862";
 // ──────────────────────────────────────────────────────────────────────────────
 
 export default function ProductDetailsClient({
