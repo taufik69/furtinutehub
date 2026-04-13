@@ -15,36 +15,40 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: {
-    default: "TotalBazar.bd | Premium Furniture & Home Decor Store in Bangladesh",
+    default: "TotalBazar.bd | Premium Products & Home Decor Store in Bangladesh",
     template: "%s | TotalBazar.bd",
   },
   description:
-    "Discover high-quality, modern furniture and home decor at TotalBazar.bd. Shop premium sofas, beds, ergonomic chairs, and office solutions in Bangladesh with home delivery.",
+    "Discover high-quality, modern Products and home decor at TotalBazar.bd. Shop premium sofas, beds, ergonomic chairs, and office solutions in Bangladesh with home delivery.",
   keywords: [
-    "furniture",
+    "Products",
     "home decor",
-    "modern furniture",
+    "modern Products",
     "sofa",
     "bed",
-    "office furniture",
+    "office Products",
     "TotalBazar.bd",
-    "Bangladesh furniture",
+    "Bangladesh Products",
     "online shopping BD",
-    "living room furniture",
+    "living room Products",
   ],
   metadataBase: new URL("https://totalbazar.bd"),
   alternates: {
     canonical: "/",
   },
+  icons: {
+    icon: "/logo.jpeg",
+    apple: "/logo.jpeg",
+  },
   openGraph: {
     title: "TotalBazar.bd | Premium Furniture & Home Decor in Bangladesh",
     description:
-      "Transform your space with modern furniture from TotalBazar.bd. Quality sofas, beds, and office furniture at affordable prices.",
+      "Discover high-quality, modern Products and home decor at TotalBazar.bd. Shop premium sofas, beds, ergonomic chairs, and office solutions in Bangladesh with home delivery.",
     url: "https://totalbazar.bd",
     siteName: "TotalBazar.bd",
     images: [
       {
-        url: "/images/cover.webp", // Default OG image
+        url: "/logo.jpeg",
         width: 1200,
         height: 630,
         alt: "TotalBazar.bd Furniture Collection",
@@ -55,10 +59,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "TotalBazar.bd | Premium Furniture & Home Decor",
+    title: "TotalBazar.bd | Premium Products & Home Decor",
     description:
       "Modern furniture and home decor solutions in Bangladesh. Quality you can trust.",
-    images: ["/images/cover.webp"],
+    images: ["/logo.jpeg"],
   },
   robots: {
     index: true,

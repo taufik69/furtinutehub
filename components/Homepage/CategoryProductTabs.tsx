@@ -172,7 +172,7 @@ export default function ProductGridSection() {
             : uiProducts.map((product: any, index: number) => (
                 <Link
                   key={product.id}
-                  href={`/products/${product.slug}`}
+                  href={`/productdetails/${product.slug}`}
                   className={`group relative overflow-hidden rounded-lg bg-colorBtnPrimaryText shadow-sm hover:shadow-xl transition-all duration-300 ${getSizeClass(
                     index,
                   )}`}
@@ -222,6 +222,34 @@ export default function ProductGridSection() {
                 </Link>
               ))}
         </div>
+
+        {/* View All Button */}
+        {!loadingProducts && uiProducts.length > 0 && (
+          <div className="flex justify-center mt-12">
+            <Link
+              href={`/allcollection?category=${activeCategoryId}`}
+              className="inline-flex items-center gap-2 bg-gray-900 text-white px-8 py-3.5 rounded-full font-medium shadow-lg hover:bg-gray-800 transition-all duration-300 hover:scale-105 active:scale-95"
+            >
+              See All{" "}
+              {categories.find((c) => (c._id || c.id) === activeCategoryId)
+                ?.name}{" "}
+              Products
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                />
+              </svg>
+            </Link>
+          </div>
+        )}
 
         {/* Empty state */}
         {!loadingProducts && uiProducts.length === 0 ? (

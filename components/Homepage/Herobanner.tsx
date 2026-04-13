@@ -1,9 +1,16 @@
 "use client";
 
 import { Banner } from "@/app/api/api";
-import HeroBgClient from "./HeroBgClient";
-import HeroContentClient from "./HeroContentClient";
-import { useState, useEffect } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import Image from "next/image";
+import { useRef } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
+// Import Swiper styles
+import "swiper/css";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
 // Fallback static data if no banners from API
 const FALLBACK_BANNERS: Banner[] = [
@@ -19,8 +26,9 @@ interface HeroBannerProps {
 }
 
 export default function HeroBanner({ banners, title, images }: HeroBannerProps) {
-  const [activeIndex, setActiveIndex] = useState(0);
-  
+  const prevRef = useRef<HTMLButtonElement>(null);
+  const nextRef = useRef<HTMLButtonElement>(null);
+
   // Handle different prop combinations
   let bannerList: Banner[] = [];
   
@@ -32,38 +40,83 @@ export default function HeroBanner({ banners, title, images }: HeroBannerProps) 
     bannerList = FALLBACK_BANNERS;
   }
 
-  const imageUrls = bannerList.map(b => b.imageUrl);
-  const displayTitle = title || bannerList[activeIndex]?.title || "Modern Furniture";
-
-  // Synchronize index with the interval if needed, 
-  // but HeroBgClient already has its own interval. 
-  // To keep them perfectly synced, we should ideally manage the interval here.
-
-  useEffect(() => {
-    if (bannerList.length <= 1) return;
-
-    const interval = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % bannerList.length);
-    }, 9000); // Matching the 9s interval in HeroBgClient
-
-    return () => clearInterval(interval);
-  }, [bannerList.length]);
-
   return (
-    <div className="relative w-full">
-      <div className="relative h-[75vh] w-full overflow-hidden">
-        {/* Background Zoom (Client) */}
-        {/* We pass the active index to HeroBgClient to force sync if we modify it, 
-            or we let it run its own logic if it's identical. 
-            However, for perfect title sync, HeroBanner should control the index. */}
-        <HeroBgClient images={imageUrls} externalIndex={activeIndex} />
+    <div className="relative w-full h-[50vh] md:h-[85vh] group">
+      <Swiper
+        modules={[Navigation, Pagination, Autoplay]}
+        onSwiper={(swiper) => {
+          // Force navigation refresh
+          if (typeof swiper.params.navigation !== "boolean") {
+            const nav = swiper.params.navigation!;
+            nav.prevEl = prevRef.current;
+            nav.nextEl = nextRef.current;
+            swiper.navigation.destroy();
+            swiper.navigation.init();
+            swiper.navigation.update();
+          }
+        }}
+        navigation={{
+          prevEl: prevRef.current,
+          nextEl: nextRef.current,
+        }}
+        pagination={{ 
+          clickable: true,
+          bulletActiveClass: "swiper-pagination-bullet-active !bg-white",
+        }}
+        autoplay={{
+          delay: 5000,
+          disableOnInteraction: false,
+        }}
+        loop={bannerList.length > 1}
+        className="h-full w-full"
+      >
+        {bannerList.map((banner, index) => (
+          <SwiperSlide key={index}>
+            <div className="relative h-full w-full">
+              <Image
+                src={banner.imageUrl}
+                alt={banner.title || `Banner ${index + 1}`}
+                fill
+                priority={index === 0}
+                className="object-cover"
+                quality={100}
+                sizes="100vw"
+              />
+            </div>
+          </SwiperSlide>
+        ))}
+      </Swiper>
 
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-black/45" />
+      {/* Custom Navigation Buttons */}
+      <button
+        ref={prevRef}
+        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 flex items-center justify-center rounded-full bg-black/20 hover:bg-black/40 text-white backdrop-blur-sm transition-all duration-300 opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0"
+        aria-label="Previous slide"
+      >
+        <ChevronLeft className="w-6 h-6" />
+      </button>
+      <button
+        ref={nextRef}
+        className="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 flex items-center justify-center rounded-full bg-black/20 hover:bg-black/40 text-white backdrop-blur-sm transition-all duration-300 opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0"
+        aria-label="Next slide"
+      >
+        <ChevronRight className="w-6 h-6" />
+      </button>
 
-        {/* Content animation (Client) */}
-        <HeroContentClient title={displayTitle} key={activeIndex} />
-      </div>
+      {/* Custom Global Styles for Pagination */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        .swiper-pagination-bullet {
+          background: rgba(255, 255, 255, 0.5) !important;
+          width: 10px !important;
+          height: 10px !important;
+          opacity: 1 !important;
+        }
+        .swiper-pagination-bullet-active {
+          background: white !important;
+          width: 24px !important;
+          border-radius: 5px !important;
+        }
+      `}} />
     </div>
   );
 }

@@ -9,7 +9,7 @@ export default function ServicesSection() {
       title: "Expert Consultation",
       description:
         "Get personalized advice from our kitchen design specialists",
-      details: "Call: +8801741659798 or 01771249206",
+      details: "Call: 01616-785862",
       highlight: "Free Appointment",
     },
     {
@@ -18,7 +18,7 @@ export default function ServicesSection() {
       title: "Professional Assembly",
       description:
         "Hassle-free installation and fitting service at your doorstep",
-      details: "Customer Care: 01771249206",
+      details: "Customer Care: 01616-785862",
       highlight: "Complimentary Service",
     },
     {

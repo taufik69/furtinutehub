@@ -45,7 +45,13 @@ export default function Footer() {
           {/* Brand Section */}
           <div className="lg:col-span-2">
             <Link href="/" className="inline-block mb-4">
-              <h2 className="text-2xl font-bold">TotalBazar </h2>
+              <Image
+                src="/logo.jpeg"
+                alt="TotalBazar Logo"
+                width={150}
+                height={50}
+                className="h-10 w-auto object-contain"
+              />
             </Link>
             <p className="text-colorFooterText/80 mb-6 leading-relaxed">
               Premium Products that transforms your space into a haven of

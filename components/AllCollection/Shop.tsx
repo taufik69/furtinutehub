@@ -89,7 +89,9 @@ export default function ShopPage() {
   useEffect(() => {
     if (
       selectedSubcategory &&
-      !subcategories.some((sc) => (sc.id || sc._id) === selectedSubcategory)
+      !subcategories.some(
+        (sc) => (sc.id || sc._id) === selectedSubcategory,
+      )
     ) {
       setSelectedSubcategory("");
     }
@@ -446,23 +448,26 @@ export default function ShopPage() {
                   Categories
                 </h3>
                 <div className="space-y-2">
-                  {categories.map((category) => (
-                    <label
-                      key={category.id}
-                      className="flex items-center gap-3 cursor-pointer group"
-                    >
-                      <input
-                        type="radio"
-                        name="category"
-                        checked={selectedCategory === category.id}
-                        onChange={() => setSelectedCategory(category.id)}
-                        className="w-4 h-4 border-colorBorder text-colorBtnPrimary focus:ring-colorBtnPrimary/20"
-                      />
-                      <span className="text-sm text-colorTextBody group-hover:text-colorLink">
-                        {category.name}
-                      </span>
-                    </label>
-                  ))}
+                  {categories.map((category) => {
+                    const categoryId = category.id || category._id;
+                    return (
+                      <label
+                        key={categoryId}
+                        className="flex items-center gap-3 cursor-pointer group"
+                      >
+                        <input
+                          type="radio"
+                          name="category"
+                          checked={selectedCategory === categoryId}
+                          onChange={() => setSelectedCategory(categoryId)}
+                          className="w-4 h-4 border-colorBorder text-colorBtnPrimary focus:ring-colorBtnPrimary/20"
+                        />
+                        <span className="text-sm text-colorTextBody group-hover:text-colorLink">
+                          {category.name}
+                        </span>
+                      </label>
+                    );
+                  })}
                   {selectedCategory && (
                     <button
                       onClick={() => setSelectedCategory("")}
