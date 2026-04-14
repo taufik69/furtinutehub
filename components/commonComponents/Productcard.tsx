@@ -97,7 +97,7 @@ export default function ProductCard({ product }: { product: any }) {
             width={400}
             height={300}
             className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500"
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 50vw, 25vw"
           />
 
           {/* Discount Badge - Top Left */}
@@ -179,7 +179,7 @@ export default function ProductCard({ product }: { product: any }) {
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row gap-2">
           {/* Add to Cart Button */}
           <button
             onClick={handleAddToCart}

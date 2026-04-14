@@ -16,7 +16,7 @@ export default function CartPage() {
   const [loading, setLoading] = useState(true);
   const [busyKey, setBusyKey] = useState<string | null>(null);
   const [clearing, setClearing] = useState(false);
-  const [deliveryCharge, setDeliveryCharge] = useState(0);
+  const [deliveryCharge, setDeliveryCharge] = useState(60);
 
   const loadCart = async () => {
     setLoading(true);

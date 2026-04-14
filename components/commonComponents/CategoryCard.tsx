@@ -37,9 +37,9 @@ export default function CategoryCard({
         </div>
 
         {/* Category Label */}
-        <div className="absolute bottom-6 left-1/2 -translate-x-1/2">
-          <div className="bg-colorBtnPrimaryText px-6 py-2.5 rounded-full text-colorBtnPrimary  hover:text-colorBtnPrimaryText shadow-lg hover:bg-colorBtnPrimaryDim/40 transition-all duration-400">
-            <span className=" font-medium text-sm sm:text-base">{title}</span>
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 w-[90%] flex justify-center">
+          <div className="bg-colorBtnPrimaryText px-1 py-2.5 rounded-full text-colorBtnPrimary hover:text-colorBtnPrimaryText shadow-lg hover:bg-colorBtnPrimaryDim/40 transition-all duration-400 w-full text-center">
+            <span className="font-medium text-xs sm:text-base whitespace-nowrap block truncate px-2">{title}</span>
           </div>
         </div>
       </div>

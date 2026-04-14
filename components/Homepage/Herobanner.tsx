@@ -35,7 +35,7 @@ export default function HeroBanner({ banners, title, images }: HeroBannerProps) 
   }
 
   return (
-    <div className="relative w-full h-[50vh] md:h-[85vh] group">
+    <div className="relative w-full h-[35vh] md:h-[85vh] group">
       <Swiper
         modules={[Navigation, Pagination, Autoplay]}
         pagination={{ 

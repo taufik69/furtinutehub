@@ -23,6 +23,10 @@ export default function CheckoutPage() {
       .then(setItems)
       .finally(() => setCartLoading(false));
   }, []);
+  
+  useEffect(() => {
+    setDeliveryCharge(deliveryArea === "inside" ? 60 : 120);
+  }, [deliveryArea]);
 
   const subtotal = useMemo(
     () => items.reduce((sum, it) => sum + it.price * it.qty, 0),

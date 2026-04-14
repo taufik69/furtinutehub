@@ -18,7 +18,7 @@ export default function ProductGridSection() {
     const pattern = index % 7;
     switch (pattern) {
       case 0:
-        return "col-span-1 row-span-2";
+        return "col-span-1 md:row-span-2";
       case 1:
         return "col-span-1 row-span-1";
       case 2:
@@ -28,9 +28,9 @@ export default function ProductGridSection() {
       case 4:
         return "col-span-1 row-span-1";
       case 5:
-        return "col-span-1 row-span-2";
+        return "col-span-1 md:row-span-2";
       case 6:
-        return "col-span-2 row-span-1";
+        return "col-span-1 md:col-span-2 row-span-1";
       default:
         return "col-span-1 row-span-1";
     }
@@ -152,7 +152,7 @@ export default function ProductGridSection() {
         </div>
 
         {/* Dense Grid - No Empty Spaces */}
-        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-4 auto-rows-[300px] grid-flow-dense">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-2 sm:gap-4 auto-rows-[200px] sm:auto-rows-[300px] grid-flow-dense">
           {loadingProducts
             ? Array.from({ length: 8 }).map((_, i) => (
                 <div
