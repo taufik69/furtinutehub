@@ -95,7 +95,7 @@ export default function ProductCard({ productData }: { productData: any }) {
     <div className="group relative bg-white border border-[#e8e8e1] rounded-xl overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300">
       {/* Product Image */}
       <Link href={`/productdetails/${slug}`} className="block relative">
-        <div className="relative overflow-hidden bg-[#f7f7f5]" style={{ aspectRatio: "4/3" }}>
+        <div className="relative overflow-hidden bg-[#f7f7f5]" style={{ aspectRatio: "1/1" }}>
           <Image
             src={image}
             alt={name}
@@ -190,7 +190,7 @@ export default function ProductCard({ productData }: { productData: any }) {
           <button
             onClick={handleAddToCart}
             disabled={isAddingToCart}
-            className="flex-1 bg-[#111111] hover:bg-[#333333] text-white py-2.5 px-3 rounded-lg text-sm font-semibold flex items-center justify-center gap-1.5 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed active:scale-95"
+            className="flex-1 bg-[#111111] hover:bg-[#333333] text-white py-2.5 px-2 rounded-lg text-[11px] sm:text-sm font-semibold flex items-center justify-center gap-1 transition-all duration-200 disabled:opacity-60 disabled:cursor-not-allowed active:scale-95"
           >
             {isAddingToCart ? (
               <>
@@ -212,7 +212,7 @@ export default function ProductCard({ productData }: { productData: any }) {
 
           {/* Buy Now Button */}
           <Link href={`/productdetails/${slug}`} className="flex-1">
-            <button className="w-full bg-rose-600 hover:bg-rose-700 text-white py-2.5 px-3 rounded-lg text-sm font-semibold flex items-center justify-center gap-1.5 transition-all duration-200 active:scale-95">
+            <button className="w-full bg-rose-600 hover:bg-rose-700 text-white py-2.5 px-2 rounded-lg text-[11px] sm:text-sm font-semibold flex items-center justify-center gap-1 transition-all duration-200 active:scale-95">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>

@@ -43,8 +43,7 @@ export function ProductImageGallery({
       {/* Main Image with Zoom */}
       <div
         ref={imageRef}
-        className="relative w-full rounded-xl overflow-hidden bg-[#f7f7f5] cursor-zoom-in select-none"
-        style={{ height: "420px" }}
+        className="relative w-full aspect-square rounded-xl overflow-hidden bg-[#f7f7f5] cursor-zoom-in select-none"
         onMouseMove={handleMouseMove}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
