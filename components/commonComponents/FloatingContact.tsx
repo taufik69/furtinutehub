@@ -3,9 +3,11 @@
 import { useState, useEffect } from "react";
 import { Phone, MessageCircle, MessageSquare, X, Plus } from "lucide-react";
 
-const WHATSAPP_NUMBER = "8801616785862";
-const MESSENGER_USERNAME = "pervejfashion";
-const CALL_NUMBER = "01616-785862";
+const WHATSAPP_NUMBER =
+  process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "01616785862";
+const MESSENGER_USERNAME =
+  process.env.NEXT_PUBLIC_MESSENGER_USERNAME ?? "pervejfashion";
+const CALL_NUMBER = process.env.NEXT_PUBLIC_CALL_NUMBER ?? "01616785862";
 
 export default function FloatingContact() {
   const [isOpen, setIsOpen] = useState(false);
@@ -57,12 +59,19 @@ export default function FloatingContact() {
               hover:scale-110 active:scale-95
               ${isOpen ? "translate-y-0 opacity-100" : "translate-y-10 opacity-0 scale-50"}
             `}
-            style={{ 
+            style={{
               transitionDelay: `${isOpen ? index * 50 : 0}ms`,
-              backgroundColor: contact.name === 'WhatsApp' ? '#25D366' : contact.name === 'Messenger' ? '#0084FF' : '#10b981'
+              backgroundColor:
+                contact.name === "WhatsApp"
+                  ? "#25D366"
+                  : contact.name === "Messenger"
+                    ? "#0084FF"
+                    : "#10b981",
             }}
           >
-            <span className={`text-xs font-bold px-2 py-1 rounded ${isOpen ? "inline-block" : "hidden"}`}>
+            <span
+              className={`text-xs font-bold px-2 py-1 rounded ${isOpen ? "inline-block" : "hidden"}`}
+            >
               {contact.name}
             </span>
             {contact.icon}
