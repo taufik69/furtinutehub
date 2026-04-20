@@ -38,10 +38,9 @@ export default function MobileNavbar({ isOpen, onClose }: MobileNavbarProps) {
       {/* Menu Panel */}
       <div
         className="
-          fixed inset-x-0 top-20 -bottom-400 z-50 md:hidden overflow-y-auto
+          fixed inset-x-0 top-[80px] bottom-0 z-50 md:hidden overflow-y-auto
           bg-colorBtnPrimaryText backdrop-blur-md backdrop-saturate-150
-          supports-backdrop-filter:bg-colorBtnPrimaryText
-          animate-slide-down
+          animate-slide-down shadow-xl border-t border-colorBorder
         "
       >
         <div className="px-4 py-6">

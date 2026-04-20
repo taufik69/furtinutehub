@@ -102,25 +102,40 @@ export default function Navbar() {
 
               {/* Mobile hamburger (vertical bars) */}
               <button
-                onClick={openMenu}
-                className="md:hidden inline-flex items-center justify-center p-2 rounded-lg text-colorNavText"
-                aria-label="Open menu"
+                onClick={isOpen ? closeMenu : openMenu}
+                className="md:hidden inline-flex items-center justify-center p-2 rounded-lg text-colorNavText transition-all duration-300"
+                aria-label={isOpen ? "Close menu" : "Open menu"}
                 aria-expanded={isOpen}
               >
-                {/* vertical bars icon */}
-                <svg
-                  className="w-7 h-7"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8 5v14M12 5v14M16 5v14"
-                  />
-                </svg>
+                {isOpen ? (
+                  <svg
+                    className="w-7 h-7"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    className="w-7 h-7"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M8 5v14M12 5v14M16 5v14"
+                    />
+                  </svg>
+                )}
               </button>
             </div>
           </div>
