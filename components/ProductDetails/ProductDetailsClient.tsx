@@ -12,7 +12,8 @@ import { Bounce, toast } from "react-toastify";
 const WHATSAPP_NUMBER =
   process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "01616785862";
 const MESSENGER_USERNAME =
-  process.env.NEXT_PUBLIC_MESSENGER_USERNAME ?? "pervejfashion";
+  process.env.NEXT_PUBLIC_MESSENGER_USERNAME ??
+  "https://www.facebook.com/bd.totalbazar";
 const CALL_NUMBER = process.env.NEXT_PUBLIC_CALL_NUMBER ?? "01616785862";
 // ──────────────────────────────────────────────────────────────────────────────
 
@@ -171,15 +172,27 @@ export default function ProductDetailsClient({
   };
 
   const handleWhatsApp = () => {
+    // Clean number: remove all non-digits
+    let cleanNumber = WHATSAPP_NUMBER.replace(/\D/g, "");
+    // If it starts with 01, prepend 88
+    if (cleanNumber.startsWith("01")) {
+      cleanNumber = "88" + cleanNumber;
+    }
+
     const message = `হ্যালো! আমি এই পণ্যটি কিনতে চাই:\n\n*${product?.name}*${selectedColor ? `\nরঙ: ${selectedColor}` : ""}${selectedSize ? `\nসাইজ: ${selectedSize}` : ""}\nপরিমাণ: ${quantity}\nমূল্য: ৳${Number(price).toLocaleString("en-BD")}\n\nঅনুগ্রহ করে নিশ্চিত করুন।`;
+
     window.open(
-      `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`,
+      `https://wa.me/${cleanNumber}?text=${encodeURIComponent(message)}`,
       "_blank",
     );
   };
 
   const handleMessenger = () => {
-    window.open(`https://m.me/${MESSENGER_USERNAME}`, "_blank");
+    // If it's just a username, use m.me link
+    const link = MESSENGER_USERNAME.includes("facebook.com")
+      ? MESSENGER_USERNAME
+      : `https://www.facebook.com/${MESSENGER_USERNAME}`;
+    window.open(link, "_blank");
   };
 
   return (

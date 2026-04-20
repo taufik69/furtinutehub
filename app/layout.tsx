@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import Script from "next/script";
+import { GoogleTagManager } from "@next/third-parties/google";
 
 import Footer from "@/components/commonComponents/Footer";
 import Navbar from "@/components/Homepage/Navbar";
@@ -16,7 +17,8 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: {
-    default: "TotalBazar.bd | Premium Products & Home Decor Store in Bangladesh",
+    default:
+      "TotalBazar.bd | Premium Products & Home Decor Store in Bangladesh",
     template: "%s | TotalBazar.bd",
   },
   description:
@@ -90,12 +92,19 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
         {process.env.NEXT_PUBLIC_API_URL && (
           <>
-            <link rel="preconnect" href={new URL(process.env.NEXT_PUBLIC_API_URL).origin} />
-            <link rel="dns-prefetch" href={new URL(process.env.NEXT_PUBLIC_API_URL).origin} />
+            <link
+              rel="preconnect"
+              href={new URL(process.env.NEXT_PUBLIC_API_URL).origin}
+            />
+            <link
+              rel="dns-prefetch"
+              href={new URL(process.env.NEXT_PUBLIC_API_URL).origin}
+            />
           </>
         )}
       </head>
-      <Script id="google-tag-manager" strategy="lazyOnload">
+      <GoogleTagManager gtmId="GTM-57HWKN4F" />
+      {/* <Script id="google-tag-manager" strategy="afterInteractive">
         {`
           (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
           new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -103,16 +112,16 @@ export default function RootLayout({
           'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
           })(window,document,'script','dataLayer','GTM-57HWKN4F');
         `}
-      </Script>
+      </Script> */}
       <body className={`${poppins.variable}`} suppressHydrationWarning>
-        <noscript>
+        {/* <noscript>
           <iframe
             src="https://www.googletagmanager.com/ns.html?id=GTM-57HWKN4F"
             height="0"
             width="0"
             style={{ display: "none", visibility: "hidden" }}
           ></iframe>
-        </noscript>
+        </noscript> */}
         <Navbar />
         <ToastContainerClient />
         <FloatingContact />

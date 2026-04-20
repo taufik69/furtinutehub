@@ -6,7 +6,8 @@ import { Phone, MessageCircle, MessageSquare, X, Plus } from "lucide-react";
 const WHATSAPP_NUMBER =
   process.env.NEXT_PUBLIC_WHATSAPP_NUMBER ?? "01616785862";
 const MESSENGER_USERNAME =
-  process.env.NEXT_PUBLIC_MESSENGER_USERNAME ?? "pervejfashion";
+  process.env.NEXT_PUBLIC_MESSENGER_USERNAME ??
+  "https://www.facebook.com/bd.totalbazar";
 const CALL_NUMBER = process.env.NEXT_PUBLIC_CALL_NUMBER ?? "01616785862";
 
 export default function FloatingContact() {
@@ -25,19 +26,25 @@ export default function FloatingContact() {
       name: "WhatsApp",
       icon: <MessageSquare className="w-5 h-5" />,
       color: "bg-[#25D366]",
-      link: `https://wa.me/${WHATSAPP_NUMBER.replace(/[^0-9]/g, "")}`,
+      link: (() => {
+        let cleanNumber = WHATSAPP_NUMBER.replace(/\D/g, "");
+        if (cleanNumber.startsWith("01")) cleanNumber = "88" + cleanNumber;
+        return `https://wa.me/${cleanNumber}`;
+      })(),
     },
     {
       name: "Messenger",
       icon: <MessageCircle className="w-5 h-5" />,
       color: "bg-[#0084FF]",
-      link: `https://m.me/${MESSENGER_USERNAME}`,
+      link: MESSENGER_USERNAME.includes("facebook.com")
+        ? MESSENGER_USERNAME
+        : `https://www.facebook.com/${MESSENGER_USERNAME}`,
     },
     {
       name: "Call Now",
       icon: <Phone className="w-5 h-5" />,
       color: "bg-emerald-500",
-      link: `tel:${CALL_NUMBER}`,
+      link: `tel:${CALL_NUMBER.replace(/\s/g, "")}`,
     },
   ];
 
