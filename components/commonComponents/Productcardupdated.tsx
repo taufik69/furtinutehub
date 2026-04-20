@@ -160,8 +160,11 @@ export default function ProductCard({ productData }: { productData: any }) {
       <div className="p-4">
         {/* Product Name */}
         <Link href={`/productdetails/${slug}`}>
-          <h3 className="font-semibold text-[#1c1d1d] text-base mb-1 hover:text-gray-600 transition-colors line-clamp-1">
+          <h3 className="font-semibold text-[#1c1d1d] text-base mb-1 hover:text-gray-600 transition-colors line-clamp-1 sm:block hidden">
             {name}
+          </h3>
+          <h3 className="font-semibold text-[#1c1d1d] text-sm mb-1 hover:text-gray-600 transition-colors block sm:hidden">
+            {name.split(" ").slice(0, 2).join(" ")}{name.split(" ").length > 2 ? "..." : ""}
           </h3>
         </Link>
 
@@ -173,13 +176,13 @@ export default function ProductCard({ productData }: { productData: any }) {
         )}
 
         {/* Price Row */}
-        <div className="flex items-center gap-2 mb-4">
+        <div className="flex items-center gap-1.5 sm:gap-2 mb-4 flex-wrap">
           {originalPrice && (
-            <span className="text-[#1c1d1d]/40 text-sm line-through">
+            <span className="text-[#1c1d1d]/40 text-[10px] sm:text-sm line-through whitespace-nowrap">
               ৳ {formattedOriginalPrice}
             </span>
           )}
-          <span className="text-[#1c1d1d] font-bold text-lg">
+          <span className="text-[#1c1d1d] font-bold text-sm sm:text-lg whitespace-nowrap">
             ৳ {formattedPrice}
           </span>
         </div>

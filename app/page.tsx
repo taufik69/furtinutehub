@@ -43,7 +43,6 @@ function SectionSkeleton() {
 
 export default async function HomePage() {
   const banners = await getBanners();
-  
 
   return (
     <main className="min-h-screen">
@@ -64,12 +63,8 @@ export default async function HomePage() {
         <ProductGridSection />
       </section>
 
-      <section>
-        <ServicesSection />
-      </section>
-      <section>
-        <CustomerFeedback />
-      </section>
+      <section>{/* <ServicesSection /> */}</section>
+      <section>{/* <CustomerFeedback /> */}</section>
     </main>
   );
 }

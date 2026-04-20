@@ -32,8 +32,16 @@ export default function Footer() {
   };
 
   const socialLinks = [
-    { icon: Facebook, href: "https://facebook.com", label: "Facebook" },
-    { icon: Instagram, href: "https://instagram.com", label: "Instagram" },
+    {
+      icon: Facebook,
+      href: "https://facebook.com/bd.totalbazar",
+      label: "Facebook",
+    },
+    {
+      icon: Instagram,
+      href: "https://instagram.com/bd.totalbazar",
+      label: "Instagram",
+    },
     { icon: Youtube, href: "https://youtube.com", label: "YouTube" },
   ];
 
@@ -68,7 +76,9 @@ export default function Footer() {
                     01616-785862
                   </p>
                   <p className="font-semibold">Bkash Nogod Personal</p>
-                  <p className="text-sm text-colorFooterText/80">01616-785862</p>
+                  <p className="text-sm text-colorFooterText/80">
+                    01616-785862
+                  </p>
                 </div>
               </div>
               <div className="flex items-start gap-3">
@@ -76,7 +86,7 @@ export default function Footer() {
                 <div>
                   <p className="font-semibold">Email</p>
                   <p className="text-sm text-colorFooterText/80">
-                   totalbazaarsbd@gmail.com
+                    totalbazaarsbd@gmail.com
                   </p>
                 </div>
               </div>
@@ -85,7 +95,7 @@ export default function Footer() {
                 <div>
                   <p className="font-semibold">Address</p>
                   <p className="text-sm text-colorFooterText/80">
-                   Kadamtali, Keraniganj, Dhaka
+                    Kadamtali, Keraniganj, Dhaka
                   </p>
                 </div>
               </div>
@@ -171,7 +181,10 @@ export default function Footer() {
             {/* Copyright */}
             <p className="text-sm text-colorFooterText/70 text-center">
               Copyright © {new Date().getFullYear()} TotalBazar. All rights
-              reserved.
+              reserved. Developer by{" "}
+              <a href="https://www.facebook.com/taufikislam.dev.web">
+                Taufik Islam
+              </a>
             </p>
           </div>
         </div>
