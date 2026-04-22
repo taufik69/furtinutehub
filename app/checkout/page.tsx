@@ -263,14 +263,47 @@ export default function CheckoutPage() {
                   <label className="block text-sm font-medium text-colorTextBody mb-2">
                     ডেলিভারি এরিয়া <span className="text-red-500">*</span>
                   </label>
-                  <select
-                    value={deliveryArea}
-                    onChange={(e) => setDeliveryArea(e.target.value)}
-                    className="w-full px-4 py-3 rounded-lg border border-colorBorder bg-colorInputBg text-colorInputText focus:outline-none focus:ring-1 focus:ring-colorBtnPrimary/40"
-                  >
-                    <option value="inside">ঢাকার সিটির ভিতরে (Inside Dhaka City)</option>
-                    <option value="outside">ঢাকা সিটির বাইরে (Outside Dhaka City)</option>
-                  </select>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <label
+                      className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                        deliveryArea === "inside"
+                          ? "border-colorBtnPrimary bg-colorBtnPrimary/5 shadow-sm"
+                          : "border-colorBorder hover:border-colorBtnPrimary/40 bg-colorInputBg"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="deliveryArea"
+                        value="inside"
+                        checked={deliveryArea === "inside"}
+                        onChange={(e) => setDeliveryArea(e.target.value)}
+                        className="w-4 h-4 text-colorBtnPrimary focus:ring-colorBtnPrimary border-gray-300"
+                      />
+                      <span className="text-sm font-semibold text-colorTextBody">
+                        ঢাকা সিটির ভিতরে (60 Tk)
+                      </span>
+                    </label>
+
+                    <label
+                      className={`flex items-center gap-3 p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                        deliveryArea === "outside"
+                          ? "border-colorBtnPrimary bg-colorBtnPrimary/5 shadow-sm"
+                          : "border-colorBorder hover:border-colorBtnPrimary/40 bg-colorInputBg"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="deliveryArea"
+                        value="outside"
+                        checked={deliveryArea === "outside"}
+                        onChange={(e) => setDeliveryArea(e.target.value)}
+                        className="w-4 h-4 text-colorBtnPrimary focus:ring-colorBtnPrimary border-gray-300"
+                      />
+                      <span className="text-sm font-semibold text-colorTextBody">
+                        ঢাকা সিটির বাইরে (120 Tk)
+                      </span>
+                    </label>
+                  </div>
                 </div>
 
                 <div>

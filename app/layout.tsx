@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import { GoogleTagManager } from "@next/third-parties/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
+
 
 import Footer from "@/components/commonComponents/Footer";
 import Navbar from "@/components/Homepage/Navbar";
@@ -86,6 +88,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      {/* this is anylytics and gtm setup */}
+      <GoogleTagManager gtmId="GTM-57HWKN4F" />
       <head>
         <link rel="preconnect" href="https://res.cloudinary.com" />
         <link rel="dns-prefetch" href="https://res.cloudinary.com" />
@@ -102,31 +106,15 @@ export default function RootLayout({
           </>
         )}
       </head>
-      <GoogleTagManager gtmId="GTM-57HWKN4F" />
-      {/* <Script id="google-tag-manager" strategy="afterInteractive">
-        {`
-          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-          })(window,document,'script','dataLayer','GTM-57HWKN4F');
-        `}
-      </Script> */}
       <body className={`${poppins.variable}`} suppressHydrationWarning>
-        {/* <noscript>
-          <iframe
-            src="https://www.googletagmanager.com/ns.html?id=GTM-57HWKN4F"
-            height="0"
-            width="0"
-            style={{ display: "none", visibility: "hidden" }}
-          ></iframe>
-        </noscript> */}
+      
         <Navbar />
         <ToastContainerClient />
         <FloatingContact />
         {children}
         <Footer />
       </body>
+        <GoogleAnalytics gaId="G-XMLR7JGK71" />
     </html>
   );
 }

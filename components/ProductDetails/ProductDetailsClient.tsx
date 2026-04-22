@@ -248,14 +248,6 @@ export default function ProductDetailsClient({
                   SKU: <span className="font-semibold text-[#1c1d1d]">{sku}</span>
                 </span>
               )} */}
-              {brandName && (
-                <span className="text-gray-500">
-                  Brand:{" "}
-                  <span className="font-semibold text-[#1c1d1d]">
-                    {brandName}
-                  </span>
-                </span>
-              )}
             </div>
 
             {/* Rating */}
